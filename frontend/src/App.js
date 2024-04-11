@@ -1,14 +1,20 @@
 import FeedBackForm from './pages/FeedBackForm';
 import LoginPage from './pages/loginPage';
 import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 
 function App() {
   return (
-    <div className="App">
-      <LoginPage/>
-    </div>
+    <React.StrictMode>
+    <BrowserRouter>
+    <Routes>
+      <Route path="/" element={<LoginPage />} />
+      <Route path="/FeedbackForm" element={<FeedBackForm />} />
+    </Routes>
+    </BrowserRouter>
+    {/* <LoginPage/> */}
+    </React.StrictMode>
   );
 }
 
