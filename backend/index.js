@@ -17,12 +17,13 @@ const schemaData = mongoose.Schema({
 
 const feedbackModel = mongoose.model("feedbacks", schemaData);
 
-mongoose.connect("mongodb://127.0.0.1:27017/feedbackCollection")
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
         console.log("Connected to db")
-        app.listen(PORT, () => console.log("Server is running"));
+        app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
     })
     .catch((err) => console.log(err))
+
 
 app.post("/saveFeedback", async (req, res) => {
     try {

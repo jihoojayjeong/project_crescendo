@@ -4,6 +4,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
+
     const navigate = useNavigate();
 
     const handleLogin = (event) => {
@@ -29,7 +30,8 @@ const LoginPage = () => {
       const loginForm = (
         <div style={{ backgroundColor: '#ffffff', padding: '20px', borderRadius: '10px', 
         boxShadow: '0px 0px 10px 0px rgba(0,0,0,0.1)', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <Button onClick={handleLogin} style={{ backgroundColor: 'maroon', borderColor: 'maroon', padding: '10px 20px', fontSize: '16px' }} type="submit">CAS Login</Button>
+          <Button onClick={handleLogin} style={{ backgroundColor: 'maroon', borderColor: 'maroon', 
+          padding: '10px 20px', fontSize: '16px' }} type="submit">CAS Login</Button>
           <Form.Group controlId="formBasicCheckbox" style={{ marginTop: '10px' }}>
             <Form.Check type="checkbox" label="Keep me signed in" />
           </Form.Group>

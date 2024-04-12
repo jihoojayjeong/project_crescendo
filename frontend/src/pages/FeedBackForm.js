@@ -3,6 +3,7 @@ import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Button from 'react-bootstrap/Button';
+import { useNavigate } from 'react-router-dom';
 
 const Card = ({ children, header }) => (
     <div className="card shadow-2-strong" style={{ borderRadius: '1rem' }}>
@@ -59,6 +60,7 @@ const FeedBackForm = () => {
     const [message, setMessage] = useState('');
     const [feedbacks, setFeedbacks] = useState([]); 
     const [showModal, setShowModal] = useState(false); 
+    const navigate = useNavigate();
 
 
     const handleSubmitBtn = () => {
@@ -81,15 +83,9 @@ const FeedBackForm = () => {
             });
     };
 
-    const fetchFeedbacks = () => {
-        axios.get('http://localhost:8080/getFeedback')
-            .then(response => {
-                setFeedbacks(response.data);
-                setShowModal(true);
-            })
-            .catch(error => {
-                toast.error(`Error fetching feedbacks: ${error}`);
-            });
+    const fetchFeedbacks = (event) => {
+        event.preventDefault();
+        navigate('/FeedbackPage');
     };
 
     return (
