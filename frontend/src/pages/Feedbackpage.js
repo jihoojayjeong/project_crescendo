@@ -11,7 +11,7 @@ const FeedbackPage = () => {
     }, []);
 
     const fetchFeedbacks = () => {
-        axios.get('http://localhost:8080/getFeedback')
+        axios.get('http://128.173.237.83:8080/getFeedback')
             .then(response => {
                 setFeedbacks(response.data);
             })
