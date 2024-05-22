@@ -1,11 +1,29 @@
 require('dotenv').config();
 const express = require('express');
+const session = require('express-session');
+const CASAuthentication = require('cas-authentication');
 const cors = require('cors');
 const mongoose = require('mongoose');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+app.use(session({
+    secret: 'your_secret_key',
+    resave: false,
+    saveUninitialized: true
+  }));
+
+  const cas = new CASAuthentication({
+    cas_url: 'https://login.vt.edu/profile/cas',
+    service_url: 'http://cs.vt.edu:8080',  // 서비스 URL
+    cas_version: '2.0',
+    renew: false,
+    is_dev_mode: false
+  });
+
+  app.use(cas.bounce);
 
 const PORT = process.env.PORT || 8080;
 
