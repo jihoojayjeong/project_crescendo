@@ -10,10 +10,9 @@ const LoginPage = () => {
     const handleLogin = (event) => {
         event.preventDefault();
         toast.info('Navigating to VT CAS login page...');
-        // login stuff going on
-        setTimeout(() => {
-          navigate('/FeedbackForm');
-        }, 2000)
+        
+        const casLoginUrl = 'https://login.vt.edu/profile/cas/login?service=https://crescendo.cs.vt.edu/Dashboard';
+        window.location.href = casLoginUrl;
     };
 
     const headerBar = (
