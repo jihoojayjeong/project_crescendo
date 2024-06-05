@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
-// import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import '@fortawesome/fontawesome-free/css/all.min.css'; 
 
-const Sidebar = ({ isOpen, toggleSidebar }) => (
+const Sidebar = ({ isOpen, toggleSidebar, handleLogout, user }) => (
     <div style={{
         width: isOpen ? '250px' : '80px',
         transition: 'width 0.3s',
@@ -15,7 +17,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => (
         color: 'white',
         padding: '1rem',
         overflow: 'hidden',
-        zIndex: 1000 // 추가
+        zIndex: 1000
     }}>
         <div onClick={toggleSidebar} style={{ cursor: 'pointer', marginBottom: '2rem', display: 'block', visibility: 'visible', position: 'relative' }}>
             <i className="fas fa-bars" style={{ fontSize: '1.5rem', color: 'white' }}></i>
@@ -24,7 +26,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => (
             <>
                 <div style={{ textAlign: 'center' }}>
                     <img src="profile_picture_url" alt="Profile" style={{ borderRadius: '50%', width: '100px', height: '100px' }} />
-                    <h3>Jihoo Jeong</h3>
+                    <h3>{user ? user.username : 'Loading...'}</h3>
                     <p>Group 6</p>
                 </div>
                 <div style={{ marginTop: '2rem', textAlign: 'center' }}>
@@ -34,7 +36,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => (
                 </div>
                 <div style={{ marginTop: 'auto', textAlign: 'center' }}>
                     <Button variant="secondary" style={{ backgroundColor: '#6a5acd', width: '100%' }}>Create Teams</Button>
-                    <Button variant="danger" style={{ marginTop: '1rem', width: '100%' }}>Sign Out</Button>
+                    <Button onClick={handleLogout} variant="danger" style={{ marginTop: '1rem', width: '100%' }}>Sign Out</Button>
                 </div>
             </>
         )}
@@ -69,46 +71,41 @@ const MainContent = ({ children, isSidebarOpen }) => (
     </div>
 );
 
-// const TextInput = ({ id, label, onChange, value }) => (
-//     <div className="form-outline mb-4">
-//         <label className="form-label" htmlFor={id}>{label}</label>
-//         <input type="text" id={id} className="form-control" onChange={onChange} value={value} style={{ marginBottom: '1rem', padding: '0.5rem' }} />
-//     </div>
-// );
-
-// const TextArea = ({ id, label, onChange, value }) => (
-//     <div className="form-outline mb-4">
-//         <label className="form-label" htmlFor={id}>{label}</label>
-//         <textarea className="form-control" id={id} rows="4" onChange={onChange} value={value} style={{ marginBottom: '1rem', padding: '0.5rem' }}></textarea>
-//     </div>
-// );
-
-// const SubmitButton = ({ onClick }) => (
-//     <button className="btn btn-lg btn-block m-3" type="submit" onClick={onClick} style={{ backgroundColor: '#6a5acd', color: 'white', border: 'none' }}>Submit</button>
-// );
-
-
 const Dashboard = () => {
-    const [title, setTitle] = useState('');
-    const [message, setMessage] = useState('');
     const [isSidebarOpen, setSidebarOpen] = useState(false);
+    const [user, setUser] = useState(null);
     const navigate = useNavigate();
 
+    useEffect(() => {
+        axios.get('https://crescendo.cs.vt.edu/api/user', { withCredentials: true }) 
+            .then(response => {
+                setUser(response.data);
+            })
+            .catch(error => {
+                console.error('Error fetching user data:', error.response || error.message || error);
+            });
+    }, []);
+
     const toggleSidebar = () => {
-        console.log("Sidebar toggled");
         setSidebarOpen(!isSidebarOpen);
     };
 
     const handleGiveFeedback = (event) => {
         event.preventDefault();
-          navigate('/Givefeedback');
+        navigate('/Givefeedback');
     };
+
+    const handleLogout = () => {
+        const casLogoutUrl = 'https://login.vt.edu/profile/cas/logout';
+        const redirectionUrl = 'https://crescendo.cs.vt.edu/';
+        window.location.href = `${casLogoutUrl}?service=${encodeURIComponent(redirectionUrl)}`;
+    }
 
     return (
         <div>
             <ToastContainer />
             <Container>
-                <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+                <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} handleLogout={handleLogout} user={user} />
                 <MainContent isSidebarOpen={isSidebarOpen}>
                     <h1>Dashboard</h1>
                     <Card header="Student Group 1">

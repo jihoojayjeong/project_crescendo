@@ -11,7 +11,7 @@ const xml2js = require('xml2js');
 const app = express();
 
 const corsOptions = {
-  origin: 'https://crescendo.cs.vt.edu:3000',
+  origin: 'https://crescendo.cs.vt.edu',
   optionsSuccessStatus: 200,
   credentials: true
 };
@@ -21,7 +21,8 @@ app.use(express.json());
 app.use(session({
   secret: 'your_secret_key',
   resave: false,
-  saveUninitialized: true
+  saveUninitialized: true,
+  cookie: { secure: true, httpOnly: true, sameSite: 'none' }
 }));
 
 const CAS_SERVICE_URL = 'https://crescendo.cs.vt.edu/Dashboard';
@@ -34,14 +35,15 @@ const httpsOptions = {
   cert: fs.readFileSync('/home/sangwonlee/cert/crescendo.cs.vt.edu.crt')
 };
 
-const redirectToHTTPS = (req, res, next) => {
-  if (!req.secure) {
-    return res.redirect('https://' + req.headers.host + req.url);
-  }
-  next();
-};
-app.use(redirectToHTTPS);
-
+// const redirectToHTTPS = (req, res, next) => {
+//   if (!req.secure) {
+//     console.log('https://' + req.headers.host + req.url);
+//     return res.redirect('https://' + req.headers.host + req.url);
+//   }
+//   next();
+// };
+// app.use(redirectToHTTPS);
+//i have not specified 8080 , it is redirecting the request to 8080
 https.createServer(httpsOptions, app).listen(PORT, () => {
   console.log(`Server started on https://localhost:${PORT}`);
 });
@@ -61,7 +63,7 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
   })
   .catch((err) => console.log(err));
 
-app.get('/FeedbackForm', async (req, res) => {
+app.get('/Dashboard', async (req, res) => {
   const { ticket } = req.query;
   if (!ticket) {
     return res.redirect(CAS_SERVICE_URL);
@@ -100,8 +102,17 @@ app.get('/Dashboard', (req, res) => {
   if (!req.session.user) {
     return res.redirect(CAS_SERVICE_URL);
   }
-
   res.send('Dashboard');
+});
+//explain where I am running fe, and be, and my issue.
+app.get('/api/user', (req, res) => {
+  console.log('Received request for /api/user'); 
+  if (!req.session.user) {
+    console.log('No user in session');
+    return res.status(401).send('User not authenticated');
+  }
+  console.log('User in session:', req.session.user);
+  res.json(req.session.user); 
 });
 
 app.post("/saveFeedback", async (req, res) => {
