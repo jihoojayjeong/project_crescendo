@@ -12,6 +12,7 @@
     "react-toastify": "^10.0.5"
   },
   "devDependencies": {
-    "nodemon": "^3.1.0"
+    "nodemon": "^3.1.0",
+    "react-app-rewired": "^2.2.1"
   }
 }

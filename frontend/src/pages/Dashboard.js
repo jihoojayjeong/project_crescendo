@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Button } from 'react-bootstrap';
+import { Button, Modal, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css'; 
@@ -26,7 +26,7 @@ const Sidebar = ({ isOpen, toggleSidebar, handleLogout, user }) => (
             <>
                 <div style={{ textAlign: 'center' }}>
                     <img src="profile_picture_url" alt="Profile" style={{ borderRadius: '50%', width: '100px', height: '100px' }} />
-                    <h3>{user ? user.username : 'Loading...'}</h3>
+                    <h3>{user ? user.name : 'Loading...'}</h3>
                     <p>Group 6</p>
                 </div>
                 <div style={{ marginTop: '2rem', textAlign: 'center' }}>
@@ -74,16 +74,31 @@ const MainContent = ({ children, isSidebarOpen }) => (
 const Dashboard = () => {
     const [isSidebarOpen, setSidebarOpen] = useState(false);
     const [user, setUser] = useState(null);
+    const [showModal, setShowModal] = useState(false);
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
-        axios.get('https://crescendo.cs.vt.edu/api/user', { withCredentials: true }) 
-            .then(response => {
+        const fetchUserData = async () => {
+            try {
+                const response = await axios.get('https://crescendo.cs.vt.edu:8080/getUser', {
+                    withCredentials: true,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                console.log("NAME :" + response.data.name)
+                if (response.data.isFirstLogin) {
+                    setShowModal(true);
+                }
                 setUser(response.data);
-            })
-            .catch(error => {
-                console.error('Error fetching user data:', error.response || error.message || error);
-            });
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+            }
+        };
+
+        fetchUserData();
     }, []);
 
     const toggleSidebar = () => {
@@ -99,7 +114,24 @@ const Dashboard = () => {
         const casLogoutUrl = 'https://login.vt.edu/profile/cas/logout';
         const redirectionUrl = 'https://crescendo.cs.vt.edu/';
         window.location.href = `${casLogoutUrl}?service=${encodeURIComponent(redirectionUrl)}`;
-    }
+    };
+
+    const handleSaveName = async () => {
+        try {
+            await axios.post('https://crescendo.cs.vt.edu:8080/saveName', { firstName, lastName }, {
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            setUser(prevState => ({ ...prevState, name: `${firstName} ${lastName}`, isFirstLogin: false }));
+            setShowModal(false);
+            toast.success('Name saved successfully');
+        } catch (error) {
+            console.error('Error saving name:', error);
+            toast.error('Failed to save name');
+        }
+    };
 
     return (
         <div>
@@ -117,6 +149,31 @@ const Dashboard = () => {
                     <Card header="Student Group 4" />
                 </MainContent>
             </Container>
+            <Modal show={showModal} onHide={() => setShowModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Enter Your Name</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form>
+                        <Form.Group controlId="formFirstName">
+                            <Form.Label>First Name</Form.Label>
+                            <Form.Control type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+                        </Form.Group>
+                        <Form.Group controlId="formLastName">
+                            <Form.Label>Last Name</Form.Label>
+                            <Form.Control type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} />
+                        </Form.Group>
+                    </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowModal(false)}>
+                        Close
+                    </Button>
+                    <Button variant="primary" onClick={handleSaveName}>
+                        Save Changes
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     );
 };

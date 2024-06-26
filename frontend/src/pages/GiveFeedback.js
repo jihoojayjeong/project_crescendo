@@ -65,7 +65,7 @@ const GiveFeedback = () => {
             title: title,
             message: message
         };
-        axios.post('http://crescendo.cs.vt.edu:8080/saveFeedback', data)
+        axios.post('https://crescendo.cs.vt.edu:8080/saveFeedback', data)
             .then(response => {
                 toast.success('Data sent successfully');
                 setTitle('');

@@ -9,9 +9,8 @@ const LoginPage = () => {
 
     const handleLogin = (event) => {
         event.preventDefault();
-        toast.info('Navigating to VT CAS login page...');
-        
-        const casLoginUrl = 'https://login.vt.edu/profile/cas/login?service=https://crescendo.cs.vt.edu/Dashboard';
+        toast.info('Navigating to VT CAS login page...');     
+        const casLoginUrl = 'https://login.vt.edu/profile/cas/login?service=https://crescendo.cs.vt.edu:8080/Dashboard';
         window.location.href = casLoginUrl;
     };
 
