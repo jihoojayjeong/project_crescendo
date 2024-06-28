@@ -12,7 +12,7 @@ const User = require('./models/user');
 const app = express();
 
 const corsOptions = {
-  origin: 'https://crescendo.cs.vt.edu',
+  origin: ['https://crescendo.cs.vt.edu', 'https://t4.ftcdn.net/jpg/04/10/43/77/360_F_410437733_hdq4Q3QOH9uwh0mcqAhRFzOKfrCR24Ta.jpg'],
   optionsSuccessStatus: 200,
   credentials: true
 };
@@ -47,13 +47,6 @@ const schemaData = mongoose.Schema({
   timestamps: true
 });
 
-const userSchema = new mongoose.Schema({
-  username: { type: String, required: true, unique: true },
-  email: { type: String, required: true, unique: true },
-  studendPid: { type: String },
-  createdAt: { type: Date, default: Date.now }
-});
-
 const feedbackModel = mongoose.model("feedbackss", schemaData);
 console.log('MongoDB URI:', process.env.MONGO_URI);
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -86,16 +79,16 @@ app.get('/Dashboard', async (req, res) => {
           return res.status(500).send('CAS ticket validation failed');
         }
         const user = result['cas:serviceResponse']['cas:authenticationSuccess'][0];
-        const username = user['cas:user'][0];
+        const pid = user['cas:user'][0];
         const attributes = user['cas:attributes'][0];
         const email = attributes['cas:eduPersonPrincipalName'][0];
-        const name = attributes['cas:displayName'] ? attributes['cas:displayName'][0] : username;
-        req.session.user = { username, email, name};
+        req.session.user = {pid, email};
         let dbUser = await User.findOne({ email: email });
+        console.log("DBUSER:" , dbUser);
         if (!dbUser) {
           // if it's first time a user logging in, save it to db and ask name
           console.log("1ST TIME USER LOGIN");
-          dbUser = new User({ username, email });
+          dbUser = new User({ pid, email, isFirstLogin : true });
           await dbUser.save();
           req.session.user.isFirstLogin = true;
         }
@@ -116,6 +109,7 @@ app.get('/Dashboard', async (req, res) => {
 });
 
 app.post('/saveName', async (req, res) => {
+  console.log("Save name enpoint reached");
   const { firstName, lastName } = req.body;
   const email = req.session.user.email;
 
@@ -142,13 +136,19 @@ app.get('/resetSession', (req, res) => {
 
 
 app.get('/getUser', (req, res) => {
-  console.log('Received request for /api/user');
+  console.log('Received request for /getUser');
   if (!req.session.user) {
     console.log('No user in session');
     return res.status(401).send('User not authenticated');
   }
   console.log('User in session:', req.session.user);
-  res.json({ username: req.session.user.username, email: req.session.user.email});
+  console.log('ATTR:', req.session.user.isFirstLogin);
+  res.json({
+    pid: req.session.user.pid,
+    email: req.session.user.email,
+    name: req.session.user.name, 
+    isFirstLogin: req.session.user.isFirstLogin 
+  });
 });
 
 app.post("/saveFeedback", async (req, res) => {

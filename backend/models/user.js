@@ -2,9 +2,10 @@ const mongoose = require('mongoose');
 
 // user model or schema 
 const userSchema = new mongoose.Schema({
-  username: { type: String, required: true, unique: true },
-  email: { type: String, required: true, unique: true },
-  studentPid: { type: String },
+  pid: { type: String, required: true, unique: true },
+  name: { type: String }, 
+  email: { type: String, required: false, unique: true },
+  isFirstLogin: { type: Boolean, default: true }, 
   createdAt: { type: Date, default: Date.now }
 });
 

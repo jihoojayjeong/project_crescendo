@@ -25,8 +25,9 @@ const Sidebar = ({ isOpen, toggleSidebar, handleLogout, user }) => (
         {isOpen && (
             <>
                 <div style={{ textAlign: 'center' }}>
-                    <img src="profile_picture_url" alt="Profile" style={{ borderRadius: '50%', width: '100px', height: '100px' }} />
+                    <img src="https://t4.ftcdn.net/jpg/04/10/43/77/360_F_410437733_hdq4Q3QOH9uwh0mcqAhRFzOKfrCR24Ta.jpg" alt="Profile" style={{ borderRadius: '50%', width: '100px', height: '100px' }} />
                     <h3>{user ? user.name : 'Loading...'}</h3>
+                    <h5>{user ? user.email : 'Loading...'}</h5>
                     <p>Group 6</p>
                 </div>
                 <div style={{ marginTop: '2rem', textAlign: 'center' }}>
@@ -88,7 +89,7 @@ const Dashboard = () => {
                         'Content-Type': 'application/json'
                     }
                 });
-                console.log("NAME :" + response.data.name)
+                console.log("Response Data :" , JSON.stringify(response.data, null, 2))
                 if (response.data.isFirstLogin) {
                     setShowModal(true);
                 }
@@ -97,7 +98,6 @@ const Dashboard = () => {
                 console.error('Error fetching user data:', error);
             }
         };
-
         fetchUserData();
     }, []);
 
@@ -170,7 +170,7 @@ const Dashboard = () => {
                         Close
                     </Button>
                     <Button variant="primary" onClick={handleSaveName}>
-                        Save Changes
+                        Save
                     </Button>
                 </Modal.Footer>
             </Modal>
