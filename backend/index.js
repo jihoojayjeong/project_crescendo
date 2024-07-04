@@ -82,7 +82,9 @@ app.get('/Dashboard', async (req, res) => {
         const pid = user['cas:user'][0];
         const attributes = user['cas:attributes'][0];
         const email = attributes['cas:eduPersonPrincipalName'][0];
-        req.session.user = {pid, email};
+        const role = getUserRole(attributes);
+
+        req.session.user = {pid, email, role};
         let dbUser = await User.findOne({ email: email });
         console.log("DBUSER:" , dbUser);
         if (!dbUser) {
@@ -97,8 +99,18 @@ app.get('/Dashboard', async (req, res) => {
           req.session.user.isFirstLogin = false;
           console.log("NOT 1ST TIME LOGIN");
         }
-        res.redirect('https://crescendo.cs.vt.edu/Dashboard');
+
+        if (role === 'student') {
+          console.log("Redirecting to student page....")
+          res.redirect('https://crescendo.cs.vt.edu/FacultyDashboard');
+        } else if (role === 'professor') {
+          console.log("Redirecting to faculty page....")
+          res.redirect('https://crescendo.cs.vt.edu/DashBoard');
+        } else {
+          res.status(403).send('Access denied');
+        }
       });
+
     } catch (error) {
       console.error('CAS ticket validation failed123:', error);
       res.status(500).send('ticket validation failed');
@@ -177,3 +189,15 @@ app.get("/getFeedback", async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 });
+
+function getUserRole(attributes) {
+  const primaryAffiliation = attributes['cas:eduPersonPrimaryAffiliation'][0];
+  const virginiaTechAffiliation = attributes['cas:virginiaTechAffiliation'];
+
+  if (primaryAffiliation === 'faculty' || (virginiaTechAffiliation && virginiaTechAffiliation.includes('VT-FACULTY'))) {
+    return 'professor';
+  } else if (primaryAffiliation === 'student' || (virginiaTechAffiliation && virginiaTechAffiliation.includes('VT-STUDENT'))) {
+    return 'student';
+  }
+  return 'unknown';
+}
