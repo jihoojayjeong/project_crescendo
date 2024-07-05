@@ -28,8 +28,7 @@ const Sidebar = ({ isOpen, toggleSidebar, handleLogout, user }) => (
                     <img src="https://t4.ftcdn.net/jpg/04/10/43/77/360_F_410437733_hdq4Q3QOH9uwh0mcqAhRFzOKfrCR24Ta.jpg" alt="Profile" style={{ borderRadius: '50%', width: '100px', height: '100px' }} />
                     <h3>{user ? user.name : 'Loading...'}</h3>
                     <h5>{user ? user.email : 'Loading...'}</h5>
-                    <p>{user ? (user.role === 'student' ? 'Faculty' : 'Group 7') : 'Loading...'}</p>
-                    <p>Group 6</p>
+                    <p>{user ? (user.role === 'student' ? 'Faculty' : 'Student') : 'Loading...'}</p>
                 </div>
                 <div style={{ marginTop: '2rem', textAlign: 'center' }}>
                     <Button variant="light" style={{ width: '100%', marginBottom: '1rem', backgroundColor: '#6a5acd', color: 'white' }}>Dashboard</Button>

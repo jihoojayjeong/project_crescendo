@@ -3,6 +3,7 @@ import FeedbackPage from './pages/Feedbackpage';
 import Dashboard from './pages/Dashboard';
 import GiveFeedback from './pages/GiveFeedback';
 import FacultyDashboard from './pages/FacultyDashboard';
+import ManageStudents from './pages/ManageStudents';
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
@@ -17,6 +18,7 @@ function App() {
       <Route path="/FeedbackPage" element={<FeedbackPage />} />
       <Route path="/GiveFeedback" element={<GiveFeedback />} />
       <Route path="/FacultyDashboard" element={<FacultyDashboard />} />
+      <Route path="/ManageStudents" element={<ManageStudents />} />
 
       
     </Routes>

@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css'; 
 
-const Sidebar = ({ isOpen, toggleSidebar, handleLogout, user }) => (
+const Sidebar = ({ isOpen, toggleSidebar, handleLogout, user, handleClickManageStudents, handleClickDashboard }) => (
     <div style={{
         width: isOpen ? '250px' : '80px',
         transition: 'width 0.3s',
@@ -28,15 +28,15 @@ const Sidebar = ({ isOpen, toggleSidebar, handleLogout, user }) => (
                     <img src="https://t4.ftcdn.net/jpg/04/10/43/77/360_F_410437733_hdq4Q3QOH9uwh0mcqAhRFzOKfrCR24Ta.jpg" alt="Profile" style={{ borderRadius: '50%', width: '100px', height: '100px' }} />
                     <h3>{user ? user.name : 'Loading...'}</h3>
                     <h5>{user ? user.email : 'Loading...'}</h5>
-                    <p>Group 6</p>
+                    <p>{user ? (user.role === 'student' ? 'Faculty' : 'Student') : 'Loading...'}</p>
                 </div>
                 <div style={{ marginTop: '2rem', textAlign: 'center' }}>
-                    <Button variant="light" style={{ width: '100%', marginBottom: '1rem', backgroundColor: '#6a5acd', color: 'white' }}>Manage Students</Button>
-                    <Button variant="light" style={{ width: '100%', marginBottom: '1rem', backgroundColor: '#6a5acd', color: 'white' }}>Teams</Button>
+                    <Button onClick={handleClickDashboard} variant="light" style={{ width: '100%', marginBottom: '1rem', backgroundColor: '#6a5acd', color: 'white' }}>Dashboard</Button>
+                    <Button onClick={handleClickManageStudents} variant="light" style={{ width: '100%', marginBottom: '1rem', backgroundColor: '#6a5acd', color: 'white' }}>Manage Students</Button>
+                    <Button variant="light" style={{ width: '100%', marginBottom: '1rem', backgroundColor: '#6a5acd', color: 'white' }}>Courses</Button>
                     <Button variant="light" style={{ width: '100%', marginBottom: '1rem', backgroundColor: '#6a5acd', color: 'white' }}>Settings</Button>
                 </div>
                 <div style={{ marginTop: 'auto', textAlign: 'center' }}>
-                    <Button variant="secondary" style={{ backgroundColor: '#6a5acd', width: '100%' }}>Create Teams</Button>
                     <Button onClick={handleLogout} variant="danger" style={{ marginTop: '1rem', width: '100%' }}>Sign Out</Button>
                 </div>
             </>
@@ -110,6 +110,16 @@ const FacultyDashboard = () => {
         navigate('/Givefeedback');
     };
 
+    const handleClickDashboard = (event) => {
+        event.preventDefault();
+        navigate('/FacultyDashboard');
+    }
+
+    const handleClickManageStudents = (event) => {
+        event.preventDefault();
+        navigate('/ManageStudents');
+    }
+
     const handleLogout = () => {
         const casLogoutUrl = 'https://login.vt.edu/profile/cas/logout';
         const redirectionUrl = 'https://crescendo.cs.vt.edu/';
@@ -137,7 +147,7 @@ const FacultyDashboard = () => {
         <div>
             <ToastContainer />
             <Container>
-                <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} handleLogout={handleLogout} user={user} />
+                <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} handleLogout={handleLogout} user={user} handleClickManageStudents={handleClickManageStudents} handleClickDashboard={handleClickDashboard}/>
                 <MainContent isSidebarOpen={isSidebarOpen}>
                     <h1>Faculty Dashboard</h1>
                     <Card header="Student Group 1">
@@ -179,4 +189,3 @@ const FacultyDashboard = () => {
 };
 
 export default FacultyDashboard;
-

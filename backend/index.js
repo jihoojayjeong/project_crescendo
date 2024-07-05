@@ -154,14 +154,28 @@ app.get('/getUser', (req, res) => {
     return res.status(401).send('User not authenticated');
   }
   console.log('User in session:', req.session.user);
-  console.log('ATTR:', req.session.user.isFirstLogin);
   res.json({
     pid: req.session.user.pid,
     email: req.session.user.email,
+    role: req.session.user.role,
     name: req.session.user.name, 
     isFirstLogin: req.session.user.isFirstLogin 
   });
 });
+
+app.get('/getStudents', async (req, res) => {
+  try {
+    const students = await User.find({}, 'name email');
+    const studentsWithRole = students.map(student => {
+      const role = req.session.user.role || 'unknown';
+      return { ...student._doc, role };
+    });
+    res.status(200).json(studentsWithRole);
+  }catch(error) {
+    console.error('Error fetching students:', error);
+    res.status(500).json({ message: 'Failed to fetch students' });
+  }
+})
 
 app.post("/saveFeedback", async (req, res) => {
   try {
