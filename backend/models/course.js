@@ -8,6 +8,10 @@ const courseSchema = new mongoose.Schema({
   term: {
     type: String,
     required: true
+  },
+  crn: {
+    type: String,
+    required: true
   }
 }, {
   timestamps: true

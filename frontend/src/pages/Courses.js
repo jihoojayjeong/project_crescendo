@@ -6,6 +6,7 @@ import { Button, Nav, Card, Modal, Form, Row, Col } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import '/home/sangwonlee/project_cresendo/frontend/src/styles/courseDetails.css';
 
 const Sidebar = ({ isOpen, toggleSidebar, handleLogout, user, handleClickDashboard, handleClickManageStudents, handleClickCourses }) => (
     <div style={{
@@ -67,7 +68,8 @@ const Courses = () => {
     const [showModal, setShowModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false); 
     const [courseName, setCourseName] = useState('');
-    const [term, setTerm] = useState('Fall 2024');
+    const [term, setTerm] = useState('');
+    const [crn, setCrn] = useState('');
     const [selectedCourseId, setSelectedCourseId] = useState(null); 
     const navigate = useNavigate();
 
@@ -108,6 +110,10 @@ const Courses = () => {
         setSidebarOpen(!isSidebarOpen);
     };
 
+    const handleCourseClick = (courseId) => {
+      navigate(`/course/${courseId}`);
+    };
+
     const handleClickDashboard = (event) => {
         event.preventDefault();
         navigate('/FacultyDashboard');
@@ -131,6 +137,7 @@ const Courses = () => {
             toast.success('Course deleted successfully!');
             setCourses(courses.filter(course => course._id !== selectedCourseId));
             setShowDeleteModal(false); 
+            setSelectedCourseId(null); // 추가
           }
         } catch (error) {
           toast.error('Failed to delete course');
@@ -142,7 +149,8 @@ const Courses = () => {
         try {
             const response = await axios.put(`https://crescendo.cs.vt.edu:8080/updateCourse/${selectedCourseId}`, {
                 name: courseName,
-                term: term
+                term: term,
+                crn: crn
             }, {
                 withCredentials: true,
                 headers: {
@@ -155,7 +163,8 @@ const Courses = () => {
                 setCourses(courses.map(course => course._id === selectedCourseId ? response.data : course));
                 setShowModal(false);
                 setCourseName('');
-                setTerm('Fall 2024');
+                setTerm('');
+                setCrn('');
                 setSelectedCourseId(null);
             }
         } catch (error) {
@@ -174,7 +183,8 @@ const Courses = () => {
         try {
             const response = await axios.post('https://crescendo.cs.vt.edu:8080/createCourse', {
                 name: courseName,
-                term: term
+                term: term,
+                crn: crn
             }, {
                 withCredentials: true,
                 headers: {
@@ -187,7 +197,9 @@ const Courses = () => {
                 setCourses([...courses, response.data]);
                 setShowModal(false);
                 setCourseName('');
-                setTerm('Fall 2024');
+                setTerm('');
+                setCrn('');
+                setSelectedCourseId(null); // 추가
             }
         } catch (error) {
             toast.error('Failed to create course');
@@ -207,17 +219,20 @@ const Courses = () => {
                   <Col>
                     <div className="d-flex flex-column align-items-center">
                       {courses.map((course) => (
-                        <Card key={course._id} className="my-3" style={{ width: '80%' }}>
+                        <Card key={course._id} className="my-3 course-card" style={{ width: '80%' }} onClick={() => handleCourseClick(course._id)}>
                         <Card.Body className="d-flex justify-content-between align-items-center">
                           <div>
-                            <Card.Title>{course.name}</Card.Title>
+                            <Card.Title>
+                              {course.name}
+                              <span style={{ fontSize: '0.8em', color: 'gray', marginLeft: '10px' }}>CRN: {course.crn}</span>
+                            </Card.Title>
                             <Card.Text>{course.term}</Card.Text>
                           </div>
                           <div className="d-flex">
-                            <Button variant="secondary" style={{ marginRight: '10px' }} onClick={() => { setShowModal(true); setCourseName(course.name); setTerm(course.term); setSelectedCourseId(course._id); }}>
+                            <Button variant="secondary" style={{ marginRight: '10px' }} onClick={(e) => {e.stopPropagation(); setShowModal(true); setCourseName(course.name); setTerm(course.term); setSelectedCourseId(course._id); setCrn(course.crn);}}>
                               <i className="fas fa-edit"></i>
                             </Button>
-                            <Button variant="danger" onClick={() => { setShowDeleteModal(true); setSelectedCourseId(course._id); }}>
+                            <Button variant="danger" onClick={(e) => {e.stopPropagation(); setShowDeleteModal(true); setSelectedCourseId(course._id); }}>
                               <i className="fas fa-trash-alt"></i>
                             </Button>
                           </div>
@@ -227,7 +242,7 @@ const Courses = () => {
                     </div>
                   </Col>
                   <Col>
-                    <Button variant="primary" onClick={() => setShowModal(true)}>Create New Course</Button>
+                    <Button variant="primary" onClick={() => {setShowModal(true); setSelectedCourseId(null); setCourseName(''); setTerm(''); setCrn('');}}>Create New Course</Button>
                   </Col>
                 </Row>
                 <Modal show={showModal} onHide={() => setShowModal(false)}>
@@ -240,7 +255,7 @@ const Courses = () => {
                         <Form.Label>Course Name</Form.Label>
                         <Form.Control 
                           type="text" 
-                          placeholder="Enter course name" 
+                          placeholder="Enter course name (e.g., CS 3214)" 
                           value={courseName} 
                           onChange={(e) => setCourseName(e.target.value)} 
                         />
@@ -252,6 +267,15 @@ const Courses = () => {
                           placeholder="Enter term (e.g., Fall 2024)" 
                           value={term} 
                           onChange={(e) => setTerm(e.target.value)} 
+                        />
+                      </Form.Group>
+                      <Form.Group controlId="formCrn">
+                        <Form.Label>CRN</Form.Label>
+                        <Form.Control 
+                          type="text" 
+                          placeholder="Enter CRN" 
+                          value={crn} 
+                          onChange={(e) => setCrn(e.target.value)} 
                         />
                       </Form.Group>
                     </Form>

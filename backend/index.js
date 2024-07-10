@@ -59,7 +59,7 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
   .catch((err) => console.log(err));
 
   app.post('/createCourse', async (req, res) => {
-    const { name, term } = req.body;
+    const { name, term, crn} = req.body;
   
     if (!req.session.user) {
       return res.status(401).send('User not authenticated');
@@ -69,6 +69,7 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
       const newCourse = new Course({
         name,
         term,
+        crn,
       });
   
       const savedCourse = await newCourse.save();
@@ -114,10 +115,10 @@ app.delete('/deleteCourse/:id', async (req, res) => {
 
 app.put('/updateCourse/:id', async (req, res) => {
   const courseId = req.params.id;
-  const { name, term } = req.body;
+  const { name, term, crn } = req.body;
 
   try {
-    const updatedCourse = await Course.findByIdAndUpdate(courseId, { name, term }, { new: true });
+    const updatedCourse = await Course.findByIdAndUpdate(courseId, { name, term, crn }, { new: true });
     if (!updatedCourse) {
       return res.status(404).send('Course not found');
     }
@@ -127,6 +128,21 @@ app.put('/updateCourse/:id', async (req, res) => {
     res.status(500).send('Failed to update course');
   }
 });
+
+app.get('/getCourse/:courseId', async (req, res) => {
+  const courseId = req.params.courseId;
+  try {
+      const course = await Course.findById(courseId); 
+      if (!course) {
+          return res.status(404).json({ error: 'Course not found' });
+      }
+      res.json(course);
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Server error' });
+  }
+});
+
 
   
 
