@@ -208,13 +208,21 @@ const Courses = () => {
                     <div className="d-flex flex-column align-items-center">
                       {courses.map((course) => (
                         <Card key={course._id} className="my-3" style={{ width: '80%' }}>
-                          <Card.Body>
+                        <Card.Body className="d-flex justify-content-between align-items-center">
+                          <div>
                             <Card.Title>{course.name}</Card.Title>
                             <Card.Text>{course.term}</Card.Text>
-                            <Button variant="danger" onClick={() => { setShowDeleteModal(true); setSelectedCourseId(course._id); }}><i className="fas fa-trash-alt"></i></Button>
-                            <Button variant="secondary" onClick={() => { setShowModal(true); setCourseName(course.name); setTerm(course.term); setSelectedCourseId(course._id); }}><i className="fas fa-edit"></i></Button>
-                          </Card.Body>
-                        </Card>
+                          </div>
+                          <div className="d-flex">
+                            <Button variant="secondary" style={{ marginRight: '10px' }} onClick={() => { setShowModal(true); setCourseName(course.name); setTerm(course.term); setSelectedCourseId(course._id); }}>
+                              <i className="fas fa-edit"></i>
+                            </Button>
+                            <Button variant="danger" onClick={() => { setShowDeleteModal(true); setSelectedCourseId(course._id); }}>
+                              <i className="fas fa-trash-alt"></i>
+                            </Button>
+                          </div>
+                        </Card.Body>
+                      </Card>
                       ))}
                     </div>
                   </Col>
