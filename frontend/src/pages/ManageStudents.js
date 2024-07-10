@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css'; 
 
-const Sidebar = ({ isOpen, toggleSidebar, handleLogout, user, handleClickDashboard, handleClickManageStudents }) => (
+const Sidebar = ({ isOpen, toggleSidebar, handleLogout, user, handleClickDashboard, handleClickManageStudents, handleClickCourses }) => (
     <div style={{
         width: isOpen ? '250px' : '80px',
         transition: 'width 0.3s',
@@ -31,9 +31,8 @@ const Sidebar = ({ isOpen, toggleSidebar, handleLogout, user, handleClickDashboa
                     <p>{user ? (user.role === 'student' ? 'Faculty' : 'Student') : 'Loading...'}</p>
                 </div>
                 <div style={{ marginTop: '2rem', textAlign: 'center' }}>
-                    <Button onClick={handleClickDashboard} variant="light" style={{ width: '100%', marginBottom: '1rem', backgroundColor: '#6a5acd', color: 'white' }}>Dashboard</Button>
+                    <Button onClick={handleClickCourses}variant="light" style={{ width: '100%', marginBottom: '1rem', backgroundColor: '#6a5acd', color: 'white' }}>Courses</Button>
                     <Button onClick={handleClickManageStudents} variant="light" style={{ width: '100%', marginBottom: '1rem', backgroundColor: '#6a5acd', color: 'white' }}>Manage Students</Button>
-                    <Button variant="light" style={{ width: '100%', marginBottom: '1rem', backgroundColor: '#6a5acd', color: 'white' }}>Courses</Button>
                     <Button variant="light" style={{ width: '100%', marginBottom: '1rem', backgroundColor: '#6a5acd', color: 'white' }}>Settings</Button>
                 </div>
                 <div style={{ marginTop: 'auto', textAlign: 'center' }}>
@@ -62,7 +61,7 @@ const MainContent = ({ children, isSidebarOpen }) => (
 );
 
 const ManageStudentsPage = () => {
-    const [isSidebarOpen, setSidebarOpen] = useState(false);
+    const [isSidebarOpen, setSidebarOpen] = useState(true);
     const [user, setUser] = useState(null);
     const [students, setStudents] = useState([]);
     const [activeTab, setActiveTab] = useState('students');
@@ -110,6 +109,11 @@ const ManageStudentsPage = () => {
         navigate('/FacultyDashboard');
     }
 
+    const handleClickCourses = (event) => {
+        event.preventDefault();
+        navigate('/Courses')
+    }
+
     const handleClickManageStudents = (event) => {
         event.preventDefault();
         navigate('/ManageStudents');
@@ -154,7 +158,8 @@ const ManageStudentsPage = () => {
         <div>
             <ToastContainer />
             <Container>
-                <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} handleLogout={handleLogout} user={user} handleClickDashboard={handleClickDashboard} handleClickManageStudents={handleClickManageStudents} />
+                <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} handleLogout={handleLogout} user={user} handleClickDashboard={handleClickDashboard} handleClickManageStudents={handleClickManageStudents} 
+                handleClickCourses={handleClickCourses}/>
                 <MainContent isSidebarOpen={isSidebarOpen}>
                     <h1>Manage Students Page</h1>
                     <div style={{ textAlign: 'center', marginTop: '50px' }}>

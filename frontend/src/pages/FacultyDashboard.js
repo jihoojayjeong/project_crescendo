@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css'; 
 
-const Sidebar = ({ isOpen, toggleSidebar, handleLogout, user, handleClickManageStudents, handleClickDashboard }) => (
+const Sidebar = ({ isOpen, toggleSidebar, handleLogout, user, handleClickManageStudents, handleClickDashboard, handleClickCourses }) => (
     <div style={{
         width: isOpen ? '250px' : '80px',
         transition: 'width 0.3s',
@@ -33,7 +33,7 @@ const Sidebar = ({ isOpen, toggleSidebar, handleLogout, user, handleClickManageS
                 <div style={{ marginTop: '2rem', textAlign: 'center' }}>
                     <Button onClick={handleClickDashboard} variant="light" style={{ width: '100%', marginBottom: '1rem', backgroundColor: '#6a5acd', color: 'white' }}>Dashboard</Button>
                     <Button onClick={handleClickManageStudents} variant="light" style={{ width: '100%', marginBottom: '1rem', backgroundColor: '#6a5acd', color: 'white' }}>Manage Students</Button>
-                    <Button variant="light" style={{ width: '100%', marginBottom: '1rem', backgroundColor: '#6a5acd', color: 'white' }}>Courses</Button>
+                    <Button onClick={handleClickCourses} variant="light" style={{ width: '100%', marginBottom: '1rem', backgroundColor: '#6a5acd', color: 'white' }}>Courses</Button>
                     <Button variant="light" style={{ width: '100%', marginBottom: '1rem', backgroundColor: '#6a5acd', color: 'white' }}>Settings</Button>
                 </div>
                 <div style={{ marginTop: 'auto', textAlign: 'center' }}>
@@ -115,6 +115,11 @@ const FacultyDashboard = () => {
         navigate('/FacultyDashboard');
     }
 
+    const handleClickCourses = (event) => {
+        event.preventDefault();
+        navigate('/Courses')
+    }
+
     const handleClickManageStudents = (event) => {
         event.preventDefault();
         navigate('/ManageStudents');
@@ -147,7 +152,8 @@ const FacultyDashboard = () => {
         <div>
             <ToastContainer />
             <Container>
-                <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} handleLogout={handleLogout} user={user} handleClickManageStudents={handleClickManageStudents} handleClickDashboard={handleClickDashboard}/>
+                <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} handleLogout={handleLogout} user={user} handleClickManageStudents={handleClickManageStudents} handleClickDashboard={handleClickDashboard}
+                handleClickCourses={handleClickCourses}/>
                 <MainContent isSidebarOpen={isSidebarOpen}>
                     <h1>Faculty Dashboard</h1>
                     <Card header="Student Group 1">
