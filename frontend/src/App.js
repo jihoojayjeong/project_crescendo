@@ -1,3 +1,4 @@
+import React from 'react';
 import LoginPage from './pages/loginPage';
 import FeedbackPage from './pages/Feedbackpage';
 import Dashboard from './pages/Dashboard';
@@ -6,13 +7,12 @@ import FacultyDashboard from './pages/FacultyDashboard';
 import ManageStudents from './pages/ManageStudents';
 import Courses from './pages/Courses';
 import CourseDetails from './pages/CourseDetails';
-import React from 'react';
+import FacultySidebar from './components/FacultySidebar';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 
 function App() {
   return (
-    <React.StrictMode>
     <BrowserRouter>
     <Routes>
       <Route path="/" element={<LoginPage />} />
@@ -23,10 +23,8 @@ function App() {
       <Route path="/ManageStudents" element={<ManageStudents />} />
       <Route path="/course/:courseId" element={<CourseDetails />} />
       <Route path="/Courses" element={<Courses />} />
-
     </Routes>
     </BrowserRouter>
-    </React.StrictMode>
   );
 }
 
