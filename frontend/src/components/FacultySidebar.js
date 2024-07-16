@@ -1,10 +1,12 @@
-// src/frontend/components/Sidebar.js
 import React from 'react';
 import { Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import '/home/sangwonlee/project_cresendo/frontend/src/styles/Sidebar.css';
 import AutoStoriesOutlinedIcon from '@mui/icons-material/AutoStoriesOutlined';
+import PeopleIcon from '@mui/icons-material/People';
+import SettingsIcon from '@mui/icons-material/Settings';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 const FacultySidebar = ({ isOpen, toggleSidebar, handleLogout, user, handleClickManageStudents, handleClickCourses }) => (
     <div style={{
@@ -33,16 +35,21 @@ const FacultySidebar = ({ isOpen, toggleSidebar, handleLogout, user, handleClick
                         <p>{user ? (user.role === 'student' ? 'Faculty' : 'Student') : 'Loading...'}</p>
                     </div>
                     <div style={{ marginTop: '2rem', textAlign: 'center' }}>
-                        <Button onClick={handleClickCourses} className="custom-button mb-4">
+                        <Button onClick={handleClickCourses} className="custom-button mb-4 button-spacing">
+                        <AutoStoriesOutlinedIcon className="icon"/>
                             Courses</Button>
-                        <Button onClick={handleClickManageStudents} className="custom-button mb-4">Manage Students</Button>
-                        <Button variant="light" className="custom-button mb-4">Settings</Button>
+                        <Button onClick={handleClickManageStudents} className="custom-button mb-4">
+                        <PeopleIcon className="icon"/>
+                            Manage Students</Button>
+                        <Button variant="light" className="custom-button mb-4">
+                        <SettingsIcon className="icon"/>
+                            Settings</Button>
+                        <Button onClick={handleLogout} className="custom-button mb-4">
+                            <LogoutIcon className="icon"/>
+                    Sign Out</Button>
                     </div>
                 </>
             )}
-        </div>
-        <div style={{ textAlign: 'center' }}>
-            <Button onClick={handleLogout} className="custom-button mb-4">Sign Out</Button>
         </div>
     </div>
 );

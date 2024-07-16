@@ -7,12 +7,19 @@ import FacultyDashboard from './pages/FacultyDashboard';
 import ManageStudents from './pages/ManageStudents';
 import Courses from './pages/Courses';
 import CourseDetails from './pages/CourseDetails';
-import FacultySidebar from './components/FacultySidebar';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
+
+
+const theme = createTheme({
+
+});
 
 
 function App() {
   return (
+    <ThemeProvider theme={theme}>
     <BrowserRouter>
     <Routes>
       <Route path="/" element={<LoginPage />} />
@@ -25,6 +32,7 @@ function App() {
       <Route path="/Courses" element={<Courses />} />
     </Routes>
     </BrowserRouter>
+  </ThemeProvider>
   );
 }
 

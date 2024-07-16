@@ -8,6 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import '/home/sangwonlee/project_cresendo/frontend/src/styles/courseDetails.css';
 import FacultySidebar from '../components/FacultySidebar';
+import '/home/sangwonlee/project_cresendo/frontend/src/styles/courses.css'
 
 
 const Container = ({ children }) => (
@@ -102,8 +103,8 @@ const Courses = () => {
           if (response.status === 200) {
             toast.success('Course deleted successfully!');
             setCourses(courses.filter(course => course._id !== selectedCourseId));
-            setShowDeleteModal(false); 
-            setSelectedCourseId(null); // 추가
+            setShowDeleteModal(false);
+            setSelectedCourseId(null);
           }
         } catch (error) {
           toast.error('Failed to delete course');
@@ -175,12 +176,12 @@ const Courses = () => {
 
     return (
         <div>
-          <ToastContainer />
+          <ToastContainer/>
           <Container>
             <FacultySidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} handleLogout={handleLogout} user={user} handleClickDashboard={handleClickDashboard} handleClickManageStudents={handleClickManageStudents} />
             <MainContent isSidebarOpen={isSidebarOpen}>
               <h1>Courses</h1>
-              <div style={{ textAlign: 'center', marginTop: '50px' }}>
+              <div style={{textAlign: 'center', marginTop: '50px'}}>
                 <Row>
                   <Col>
                     <div className="d-flex flex-column align-items-center">
@@ -208,7 +209,10 @@ const Courses = () => {
                     </div>
                   </Col>
                   <Col>
-                    <Button variant="primary" onClick={() => {setShowModal(true); setSelectedCourseId(null); setCourseName(''); setTerm(''); setCrn('');}}>Create New Course</Button>
+                    <Button variant="primary" onClick={() => 
+                      {setShowModal(true); setSelectedCourseId(null); setCourseName(''); setTerm(''); setCrn('');}} 
+                      className='create-course-button'>
+                      Create New Course</Button>
                   </Col>
                 </Row>
                 <Modal show={showModal} onHide={() => setShowModal(false)}>

@@ -9,7 +9,6 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import FacultySidebar from '../components/FacultySidebar';
 import '/home/sangwonlee/project_cresendo/frontend/src/styles/Sidebar.css';
 
-
 const MainContent = ({ children, isSidebarOpen }) => (
     <div style={{
         marginLeft: isSidebarOpen ? '250px' : '80px',
