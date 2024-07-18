@@ -43,7 +43,7 @@ const Courses = () => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const response = await axios.get('https://crescendo.cs.vt.edu:8080/getUser', {
+                const response = await axios.get('https://crescendo.cs.vt.edu:8080/user/getUser', {
                     withCredentials: true,
                     headers: {
                         'Content-Type': 'application/json'
@@ -57,7 +57,7 @@ const Courses = () => {
         };
         const fetchCourses = async () => {
             try {
-                const response = await axios.get('https://crescendo.cs.vt.edu:8080/getCourses', {
+                const response = await axios.get('https://crescendo.cs.vt.edu:8080/courses/', {
                     withCredentials: true,
                     headers: {
                         'Content-Type': 'application/json'
@@ -81,19 +81,14 @@ const Courses = () => {
       navigate(`/course/${courseId}`);
     };
 
-    const handleClickDashboard = (event) => {
-        event.preventDefault();
-        navigate('/FacultyDashboard');
-    }
-
     const handleClickManageStudents = (event) => {
         event.preventDefault();
         navigate('/ManageStudents');
     }
     
-    const handleDeleteCourse = async () => { 
+    const handleDeleteCourse = async () => {
         try {
-          const response = await axios.delete(`https://crescendo.cs.vt.edu:8080/deleteCourse/${selectedCourseId}`, {
+          const response = await axios.delete(`https://crescendo.cs.vt.edu:8080/courses/${selectedCourseId}`, {
             withCredentials: true,
             headers: {
               'Content-Type': 'application/json'
@@ -114,7 +109,7 @@ const Courses = () => {
 
     const handleUpdateCourse = async () => { 
         try {
-            const response = await axios.put(`https://crescendo.cs.vt.edu:8080/updateCourse/${selectedCourseId}`, {
+            const response = await axios.put(`https://crescendo.cs.vt.edu:8080/courses/${selectedCourseId}`, {
                 name: courseName,
                 term: term,
                 crn: crn
@@ -148,7 +143,7 @@ const Courses = () => {
 
     const handleCreateCourse = async () => {
         try {
-            const response = await axios.post('https://crescendo.cs.vt.edu:8080/createCourse', {
+            const response = await axios.post('https://crescendo.cs.vt.edu:8080/courses/create', {
                 name: courseName,
                 term: term,
                 crn: crn
@@ -178,7 +173,7 @@ const Courses = () => {
         <div>
           <ToastContainer/>
           <Container>
-            <FacultySidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} handleLogout={handleLogout} user={user} handleClickDashboard={handleClickDashboard} handleClickManageStudents={handleClickManageStudents} />
+            <FacultySidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} handleLogout={handleLogout} user={user} handleClickManageStudents={handleClickManageStudents} />
             <MainContent isSidebarOpen={isSidebarOpen}>
               <h1>Courses</h1>
               <div style={{textAlign: 'center', marginTop: '50px'}}>

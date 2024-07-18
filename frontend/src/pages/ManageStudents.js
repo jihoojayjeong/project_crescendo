@@ -70,10 +70,6 @@ const ManageStudentsPage = () => {
         setSidebarOpen(!isSidebarOpen);
     };
 
-    const handleClickDashboard = (event) => {
-        event.preventDefault();
-        navigate('/FacultyDashboard');
-    }
 
     const handleClickCourses = (event) => {
         event.preventDefault();
@@ -124,7 +120,7 @@ const ManageStudentsPage = () => {
         <div>
             <ToastContainer />
             <Container>
-                <FacultySidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} handleLogout={handleLogout} user={user} handleClickDashboard={handleClickDashboard} handleClickManageStudents={handleClickManageStudents} 
+                <FacultySidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} handleLogout={handleLogout} user={user} handleClickManageStudents={handleClickManageStudents} 
                 handleClickCourses={handleClickCourses}/>
                 <MainContent isSidebarOpen={isSidebarOpen}>
                     <h1>Manage Students Page</h1>

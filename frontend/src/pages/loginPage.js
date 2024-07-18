@@ -6,10 +6,28 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const LoginPage = () => {
 
+    useEffect(() => {
+        axios.get('/auth/checkSession')
+            .then(response => {
+                const user = response.data.user;
+                if (user) {
+                    if (user.role === 'student') {
+                        window.location.href = '/Courses';
+                    } else if (user.role === 'professor') {
+                        window.location.href = '/Dashboard';
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('No active session', error);
+            });
+    }, []);
+
+
     const handleLogin = (event) => {
         event.preventDefault();
         toast.info('Navigating to VT CAS login page...');
-        const casLoginUrl = 'https://login.vt.edu/profile/cas/login?service=https://crescendo.cs.vt.edu:8080/Dashboard';
+        const casLoginUrl = 'https://login.vt.edu/profile/cas/login?service=https://crescendo.cs.vt.edu:8080/auth/Dashboard';
         window.location.href = casLoginUrl;
     };
 

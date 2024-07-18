@@ -9,6 +9,9 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import FacultySidebar from '../components/FacultySidebar';
 import '/home/sangwonlee/project_cresendo/frontend/src/styles/Sidebar.css';
 
+
+
+
 const MainContent = ({ children, isSidebarOpen }) => (
     <div style={{
         marginLeft: isSidebarOpen ? '250px' : '80px',
@@ -21,6 +24,43 @@ const MainContent = ({ children, isSidebarOpen }) => (
 );
 
 const CourseDetails = () => {
+
+    const [courses, setCourses] = useState([]);
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const response = await axios.get('https://crescendo.cs.vt.edu:8080/user/getUser', {
+                    withCredentials: true,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                console.log("Response Data :", JSON.stringify(response.data, null, 2));
+                setUser(response.data);
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+            }
+        };
+        const fetchCourses = async () => {
+            try {
+                const response = await axios.get('https://crescendo.cs.vt.edu:8080/courses/', {
+                    withCredentials: true,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                console.log("Fetched Courses: ", response.data);
+                setCourses(response.data);
+            } catch (error) {
+                console.error('Error fetching courses:', error);
+            }
+        };
+        fetchUserData();
+        fetchCourses();
+    }, []);
+
+
     const { courseId } = useParams();
     const [course, setCourse] = useState(null);
     const [isSidebarOpen, setSidebarOpen] = useState(true);
@@ -30,7 +70,7 @@ const CourseDetails = () => {
     useEffect(() => {
         const fetchCourseDetails = async () => {
             try {
-                const response = await axios.get(`https://crescendo.cs.vt.edu:8080/getCourse/${courseId}`, {
+                const response = await axios.get(`https://crescendo.cs.vt.edu:8080/courses/${courseId}`, {
                     withCredentials: true,
                     headers: {
                         'Content-Type': 'application/json'
@@ -64,11 +104,6 @@ const CourseDetails = () => {
         setSidebarOpen(!isSidebarOpen);
     };
 
-    const handleClickDashboard = (event) => {
-        event.preventDefault();
-        navigate('/FacultyDashboard');
-    }
-
     const handleClickManageStudents = (event) => {
         event.preventDefault();
         navigate('/ManageStudents');
@@ -98,7 +133,6 @@ const CourseDetails = () => {
                     toggleSidebar={toggleSidebar} 
                     handleLogout={handleLogout} 
                     user={user} 
-                    handleClickDashboard={handleClickDashboard} 
                     handleClickManageStudents={handleClickManageStudents} 
                     handleClickCourses={handleClickCourses} 
                 />

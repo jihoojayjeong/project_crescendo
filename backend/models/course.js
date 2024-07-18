@@ -12,7 +12,11 @@ const courseSchema = new mongoose.Schema({
   crn: {
     type: String,
     required: true
-  }
+  },
+  uniqueId: { 
+    type:String, 
+    unique: true, 
+    required : true}
 }, {
   timestamps: true
 });
