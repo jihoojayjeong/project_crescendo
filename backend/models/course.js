@@ -13,10 +13,15 @@ const courseSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  uniqueId: { 
-    type:String, 
-    unique: true, 
-    required : true}
+  uniqueCode: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  students : [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }]
 }, {
   timestamps: true
 });

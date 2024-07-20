@@ -9,8 +9,8 @@ exports.createCourse = async (req, res) => {
   }
 
   try {
-    const uniqueId = uuidv4();
-    const newCourse = new Course({ name, term, crn, uniqueId});
+    const uniqueCode = uuidv4();
+    const newCourse = new Course({ name, term, crn, uniqueCode});
     const savedCourse = await newCourse.save();
     res.status(201).json(savedCourse);
   } catch (error) {
@@ -19,12 +19,12 @@ exports.createCourse = async (req, res) => {
   }
 };
 
-exports.registerCourse = async (req, res) => {
-  const { uniqueId } = req.body;
+exports.register = async (req, res) => {
+  const { uniqueCode } = req.body;
   const userId = req.session.user._id;
 
   try {
-    const course = await Course.findOne({ url: courseUrl });
+    const course = await Course.findOne({ uniqueCode });
     if (!course) {
       return res.status(404).send('Course not found');
     }
@@ -35,10 +35,10 @@ exports.registerCourse = async (req, res) => {
 
     course.students.push(userId);
     await course.save();
-    res.status(200).json(course);
+    res.status(200).json({ message: 'Successfully registered for the course', course });
   } catch (error) {
     console.error('Error registering course:', error);
-    res.status(500).send('Failed to register course');
+    res.status(500).json({ message: 'Failed to register course' });
   }
 };
 
@@ -49,6 +49,17 @@ exports.getCourses = async (req, res) => {
   } catch (error) {
     console.error('Error fetching courses:', error);
     res.status(500).send('Failed to fetch courses');
+  }
+};
+
+exports.getRegisteredCourses = async (req, res) => {
+  const userId = req.session.user_id;
+  try {
+    const courses = await Course.find({ students: userId });
+    res.status(200).json(courses);
+  } catch(error) {
+    onsole.error('Error fetching user courses:', error);
+    res.status(500).send('Failed to fetch user courses');
   }
 };
 
@@ -104,7 +115,3 @@ exports.deleteCourse = async (req, res) => {
   }
 };
 
-function generateUniqueUrl() {
-  // 고유한 URL을 생성하는 로직을 추가합니다 (예: UUID 사용)
-  return 'unique-url-example';
-}

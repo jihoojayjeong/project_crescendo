@@ -76,6 +76,7 @@ const CourseDetails = () => {
                         'Content-Type': 'application/json'
                     }
                 });
+                console.log('Course details:', response.data);
                 setCourse(response.data);
             } catch (error) {
                 console.error('Error fetching course details:', error);
@@ -84,7 +85,7 @@ const CourseDetails = () => {
 
         const fetchUserData = async () => {
             try {
-                const response = await axios.get('https://crescendo.cs.vt.edu:8080/getUser', {
+                const response = await axios.get('https://crescendo.cs.vt.edu:8080/user/getUser', {
                     withCredentials: true,
                     headers: {
                         'Content-Type': 'application/json'
@@ -144,6 +145,7 @@ const CourseDetails = () => {
                 <h2>{course.name}</h2>
                 <p>Term: {course.term}</p>
                 <p>CRN: {course.crn}</p>
+                <p>Course Code: {course.uniqueCode}</p> 
                 </>
             )}
           </div>
