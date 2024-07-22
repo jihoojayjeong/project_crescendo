@@ -7,10 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import FacultySidebar from '../components/FacultySidebar';
-import '/home/sangwonlee/project_cresendo/frontend/src/styles/Sidebar.css';
-
-
-
+import StudentsTab from '../components/StudentsTab'; 
 
 const MainContent = ({ children, isSidebarOpen }) => (
     <div style={{
@@ -24,43 +21,6 @@ const MainContent = ({ children, isSidebarOpen }) => (
 );
 
 const CourseDetails = () => {
-
-    const [courses, setCourses] = useState([]);
-
-    useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const response = await axios.get('https://crescendo.cs.vt.edu:8080/user/getUser', {
-                    withCredentials: true,
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                console.log("Response Data :", JSON.stringify(response.data, null, 2));
-                setUser(response.data);
-            } catch (error) {
-                console.error('Error fetching user data:', error);
-            }
-        };
-        const fetchCourses = async () => {
-            try {
-                const response = await axios.get('https://crescendo.cs.vt.edu:8080/courses/', {
-                    withCredentials: true,
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                console.log("Fetched Courses: ", response.data);
-                setCourses(response.data);
-            } catch (error) {
-                console.error('Error fetching courses:', error);
-            }
-        };
-        fetchUserData();
-        fetchCourses();
-    }, []);
-
-
     const { courseId } = useParams();
     const [course, setCourse] = useState(null);
     const [isSidebarOpen, setSidebarOpen] = useState(true);
@@ -76,7 +36,6 @@ const CourseDetails = () => {
                         'Content-Type': 'application/json'
                     }
                 });
-                console.log('Course details:', response.data);
                 setCourse(response.data);
             } catch (error) {
                 console.error('Error fetching course details:', error);
@@ -108,12 +67,12 @@ const CourseDetails = () => {
     const handleClickManageStudents = (event) => {
         event.preventDefault();
         navigate('/ManageStudents');
-    }
+    };
 
     const handleClickCourses = (event) => {
         event.preventDefault();
         navigate('/Courses');
-    }
+    };
 
     const handleLogout = () => {
         const casLogoutUrl = 'https://login.vt.edu/profile/cas/logout';
@@ -140,15 +99,15 @@ const CourseDetails = () => {
                 <MainContent isSidebarOpen={isSidebarOpen}>
                     <h1>Course Details</h1>
                     <div style={{ marginBottom: '20px', padding: '10px', border: '1px solid #ccc', borderRadius: '5px' }}>
-                {course && (
-                <>
-                <h2>{course.name}</h2>
-                <p>Term: {course.term}</p>
-                <p>CRN: {course.crn}</p>
-                <p>Course Code: {course.uniqueCode}</p> 
-                </>
-            )}
-          </div>
+                        {course && (
+                            <>
+                                <h2>{course.name}</h2>
+                                <p>Term: {course.term}</p>
+                                <p>CRN: {course.crn}</p>
+                                <p>Course Code: {course.uniqueCode}</p> 
+                            </>
+                        )}
+                    </div>
                     <Tab.Container id="left-tabs-example" defaultActiveKey="assignments">
                         <Nav variant="tabs">
                             <Nav.Item>
@@ -167,8 +126,7 @@ const CourseDetails = () => {
                                 {/* Assignments content here */}
                             </Tab.Pane>
                             <Tab.Pane eventKey="students">
-                                <h2>Students</h2>
-                                {/* Students content here */}
+                                <StudentsTab /> {/* StudentsTab 컴포넌트 사용 */}
                             </Tab.Pane>
                             <Tab.Pane eventKey="feedbacks">
                                 <h2>Feedbacks</h2>

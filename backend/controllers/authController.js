@@ -81,10 +81,10 @@ const parseCasResponse = (data) => {
 };
 
 const redirectUser = (req, res, role) => {
-  if (role === 'studentssss') {
+  if (role === 'student') {
     console.log("Redirecting to student page....");
     return res.redirect('https://crescendo.cs.vt.edu/Courses');
-  } else if (role === 'student') {
+  } else if (role === 'students') {
     console.log("Redirecting to faculty page....");
     return res.redirect('https://crescendo.cs.vt.edu/Dashboard');
   } else {

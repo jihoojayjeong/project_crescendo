@@ -115,3 +115,19 @@ exports.deleteCourse = async (req, res) => {
   }
 };
 
+exports.getStudentsInCourse = async(req, res) => {
+  const courseId = req.params.courseId;
+
+  try{
+    const course = await Course.findById(courseId).populate('students', 'name email');
+    if (!course) {
+      return res.status(404).json({message : 'course not found'});
+    }
+
+    res.status(200).json(course.students);
+  } catch (error) {
+    console.error('Error fetching students:', error);
+    res.status(500).json({ message: 'Failed to fetch students' });
+  }
+}
+
