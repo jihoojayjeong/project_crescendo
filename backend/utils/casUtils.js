@@ -1,4 +1,4 @@
-const CAS_SERVICE_URL = 'https://crescendo.cs.vt.edu:8080/Dashboard';
+const CAS_SERVICE_URL = 'https://crescendo.cs.vt.edu:8080/auth/Dashboard';
 const CAS_VALIDATE_URL = 'https://login.vt.edu/profile/cas/serviceValidate';
 
 function getUserRole(attributes) {

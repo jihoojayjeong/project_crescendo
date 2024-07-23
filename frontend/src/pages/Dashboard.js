@@ -88,7 +88,7 @@ const Dashboard = () => {
 
     const handleSaveName = async () => {
         try {
-            await axios.post('https://crescendo.cs.vt.edu:8080/saveName', { firstName, lastName }, {
+            await axios.post('https://crescendo.cs.vt.edu:8080/user/saveName', { firstName, lastName }, {
                 withCredentials: true,
                 headers: {
                     'Content-Type': 'application/json'
