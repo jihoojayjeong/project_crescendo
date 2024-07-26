@@ -1,4 +1,5 @@
 const Course = require('../models/course');
+const User = require('../models/user'); 
 const { v4: uuidv4 } = require('uuid'); 
 
 exports.createCourse = async (req, res) => {
@@ -21,7 +22,7 @@ exports.createCourse = async (req, res) => {
 
 exports.register = async (req, res) => {
   const { uniqueCode } = req.body;
-  const userId = req.session.user._id;
+  const userPid = req.session.user.pid;
 
   try {
     const course = await Course.findOne({ uniqueCode });
@@ -29,11 +30,11 @@ exports.register = async (req, res) => {
       return res.status(404).send('Course not found');
     }
 
-    if (course.students.includes(userId)) {
+    if (course.students.includes(userPid)) {
       return res.status(400).send('User already registered for this course');
     }
 
-    course.students.push(userId);
+    course.students.push(userPid);
     await course.save();
     res.status(200).json({ message: 'Successfully registered for the course', course });
   } catch (error) {
@@ -119,15 +120,36 @@ exports.getStudentsInCourse = async(req, res) => {
   const courseId = req.params.courseId;
 
   try{
-    const course = await Course.findById(courseId).populate('students', 'name email');
+    const course = await Course.findById(courseId);
     if (!course) {
       return res.status(404).json({message : 'course not found'});
     }
 
-    res.status(200).json(course.students);
+    const students = await User.find({ pid : { $in : course.students}}, 'name email');
+
+    res.status(200).json(students);
   } catch (error) {
     console.error('Error fetching students:', error);
     res.status(500).json({ message: 'Failed to fetch students' });
   }
 }
+
+exports.deleteStudentFromCourse = async (req, res) => {
+  const { courseId, studentId } = req.params;
+
+  try {
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ message: 'Course not found' });
+    }
+
+    course.students = course.students.filter(pid => pid.toString() !== studentId);
+    await course.save();
+
+    res.status(200).json({ message: 'Student removed from course successfully' });
+  } catch (error) {
+    console.error('Error removing student from course:', error);
+    res.status(500).json({ message: 'Failed to remove student from course' });
+  }
+};
 

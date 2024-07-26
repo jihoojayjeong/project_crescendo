@@ -19,8 +19,7 @@ const courseSchema = new mongoose.Schema({
     unique: true
   },
   students : [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
+    type: String
   }]
 }, {
   timestamps: true
