@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Button, Nav, Card, Modal, Form, Row, Col } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { Button, Card, Modal, Form, Row, Col } from 'react-bootstrap';
+import { useNavigate, useLocation } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import '/home/sangwonlee/project_cresendo/frontend/src/styles/courseDetails.css';
@@ -42,6 +42,7 @@ const Courses = () => {
     const [lastName, setLastName] = useState('');
     const [showNameModal, setShowNameModal] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -86,7 +87,7 @@ const Courses = () => {
     };
 
     const handleCourseClick = (courseId) => {
-        navigate(`/course/${courseId}`);
+        navigate(`/course/${courseId}`, { state : {from: location.pathname}});
     };
 
     const handleClickManageStudents = (event) => {

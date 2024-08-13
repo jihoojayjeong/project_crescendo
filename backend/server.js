@@ -23,10 +23,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(session({
   secret: 'your_secret_key',
   resave: false,
-  saveUninitialized: false,
+  saveUninitialized: true,
   store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
   cookie: { secure: true }
 }));
+
 
 const PORT = process.env.PORT || 8080;
 const httpsOptions = {

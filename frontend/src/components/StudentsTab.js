@@ -26,16 +26,29 @@ const StudentsTab = () => {
   }, [courseId]);
 
   const handleDelete = async (studentId) => {
+    const isConfirmed = window.confirm("Are you sure you want to remove this student?");
+    
+    if (!isConfirmed) {
+      return;
+    }
+  
     try {
-      await axios.delete(`https://crescendo.cs.vt.edu:8080/courses/${courseId}/students/${studentId}`, {
+      const response = await axios.delete(`https://crescendo.cs.vt.edu:8080/courses/${courseId}/students/${studentId}`, {
         withCredentials: true,
         headers: {
           'Content-Type': 'application/json'
         }
       });
-      setStudents(students.filter(student => student._id !== studentId));
+  
+      if (response.status === 200) {
+        setStudents(prevStudents => prevStudents.filter(student => student._id !== studentId));
+        alert('Student successfully removed from the course.');
+      } else {
+        throw new Error('Failed to remove student');
+      }
     } catch (error) {
-      console.error('Error deleting student:', error);
+      console.error('Error removing student:', error);
+      alert('Failed to remove student. Please try again.');
     }
   };
 

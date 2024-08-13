@@ -138,12 +138,19 @@ exports.deleteStudentFromCourse = async (req, res) => {
   const { courseId, studentId } = req.params;
 
   try {
+    const student = await User.findById(studentId)
+
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found' });
+    }
+    const studentPid = student.pid; 
+
     const course = await Course.findById(courseId);
     if (!course) {
       return res.status(404).json({ message: 'Course not found' });
     }
 
-    course.students = course.students.filter(pid => pid.toString() !== studentId);
+    course.students = course.students.filter(pid => pid !== studentPid);
     await course.save();
 
     res.status(200).json({ message: 'Student removed from course successfully' });
@@ -152,4 +159,3 @@ exports.deleteStudentFromCourse = async (req, res) => {
     res.status(500).json({ message: 'Failed to remove student from course' });
   }
 };
-

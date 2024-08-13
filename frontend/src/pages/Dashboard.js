@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css'; 
 import StudentSidebar from '../components/StudentSidebar';
@@ -38,6 +38,7 @@ const Dashboard = () => {
     const [courseCode, setCourseCode] = useState(''); 
     const [courses, setCourses] = useState([]); 
     const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -75,6 +76,10 @@ const Dashboard = () => {
         fetchUserData();
         fetchUserCourses();
     }, []);
+
+    const handleCourseClick = (courseId) => {
+        navigate(`/course/${courseId}`, { state: {from: location.pathname}});
+    };
 
     const toggleSidebar = () => {
         setSidebarOpen(!isSidebarOpen);
@@ -128,10 +133,6 @@ const Dashboard = () => {
     };
     
 
-    const handleCardClick = (courseId) => {
-        navigate(`/courses/${courseId}`);
-    };
-
     return (
         <div>
             <ToastContainer />
@@ -141,7 +142,7 @@ const Dashboard = () => {
                     <h1>Dashboard</h1>
                     <Button variant="primary" onClick={handleRegisterCourse}>Register Course</Button>
                     {courses.map((course, index) => (
-                        <Card key={index} style={{ marginTop: '20px', cursor: 'pointer' }} onClick={() => handleCardClick(course._id)}>
+                        <Card key={index} style={{ marginTop: '20px', cursor: 'pointer' }} onClick={() => handleCourseClick(course._id)}>
                             <Card.Header>{course.name}</Card.Header>
                             <Card.Body>
                                 <Card.Title>Term: {course.term}</Card.Title>

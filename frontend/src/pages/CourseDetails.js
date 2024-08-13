@@ -26,6 +26,7 @@ const CourseDetails = () => {
     const [isSidebarOpen, setSidebarOpen] = useState(true);
     const [user, setUser] = useState(null);
     const navigate = useNavigate();
+    const [userRole, setUserRole] = useState(null);
 
     useEffect(() => {
         const fetchCourseDetails = async () => {
@@ -126,7 +127,7 @@ const CourseDetails = () => {
                                 {/* Assignments content here */}
                             </Tab.Pane>
                             <Tab.Pane eventKey="students">
-                                <StudentsTab /> {/* StudentsTab 컴포넌트 사용 */}
+                                <StudentsTab />
                             </Tab.Pane>
                             <Tab.Pane eventKey="feedbacks">
                                 <h2>Feedbacks</h2>

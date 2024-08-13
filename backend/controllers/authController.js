@@ -35,6 +35,7 @@ exports.handleDashboard = async (req, res) => {
     const role = getUserRole(attributes);
 
     req.session.user = { pid, email, role };
+    req.session.user_id = pid;
     let dbUser = await User.findOne({ email: email });
     if (!dbUser) {
       dbUser = new User({ pid, email, isFirstLogin: true });
