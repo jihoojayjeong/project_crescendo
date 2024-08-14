@@ -5,25 +5,10 @@ import Dashboard from './pages/Dashboard';
 import GiveFeedback from './pages/GiveFeedback';
 import ManageStudents from './pages/ManageStudents';
 import Courses from './pages/Courses';
-import CourseDetails from './pages/CourseDetails';
-import CoursePage from './pages/CoursePage'
+import CourseComponent from './components/CourseComponents';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-
-const CourseComponent = () => {
-  const location = useLocation();
-  const from = location.state?.from || '';
-  if (from.startsWith('/Dashboard')) {
-    return <CoursePage />;
-  }
-  else if(from.startsWith('/Courses')) {
-    return <CourseDetails />;
-  } 
-  else{
-    console.log("NOTHING RETURNED!")
-  }
-}
 const theme = createTheme({
 
 });

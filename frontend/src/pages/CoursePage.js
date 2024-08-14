@@ -25,7 +25,6 @@ const CoursePage = () => {
     const [course, setCourse] = useState(null);
     const [isSidebarOpen, setSidebarOpen] = useState(true);
     const [user, setUser] = useState(null);
-    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchCourseDetails = async () => {
@@ -64,16 +63,6 @@ const CoursePage = () => {
         setSidebarOpen(!isSidebarOpen);
     };
 
-    const handleClickManageStudents = (event) => {
-        event.preventDefault();
-        navigate('/ManageStudents');
-    };
-
-    const handleClickCourses = (event) => {
-        event.preventDefault();
-        navigate('/Courses');
-    };
-
     const handleLogout = () => {
         const casLogoutUrl = 'https://login.vt.edu/profile/cas/logout';
         const redirectionUrl = 'https://crescendo.cs.vt.edu/';
@@ -87,6 +76,7 @@ const CoursePage = () => {
     return (
         <div>
             <ToastContainer />
+            <StudentSidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} handleLogout={handleLogout} user={user} />
             <div style={{ display: 'flex', width: '100%' }}>
                 <MainContent isSidebarOpen={isSidebarOpen}>
                     <h1>Course Page</h1>

@@ -2,14 +2,15 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Button, Card, Modal, Form, Row, Col } from 'react-bootstrap';
+import { Button, Card, Modal, Row, Col } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import '/home/sangwonlee/project_cresendo/frontend/src/styles/courseDetails.css';
 import FacultySidebar from '../components/FacultySidebar';
 import '/home/sangwonlee/project_cresendo/frontend/src/styles/courses.css';
-import NameModal from '../components/\bNameModal';
+import NameModal from '../components/NameModal';
+import CreateCourseModal from '../components/CreateCourseModal';
 
 const Container = ({ children }) => (
     <div style={{ display: 'flex', width: '100%' }}>
@@ -87,7 +88,7 @@ const Courses = () => {
     };
 
     const handleCourseClick = (courseId) => {
-        navigate(`/course/${courseId}`, { state : {from: location.pathname}});
+        navigate(`/course/${courseId}`, { state: { from: location.pathname } });
     };
 
     const handleClickManageStudents = (event) => {
@@ -237,50 +238,18 @@ const Courses = () => {
                                     Create New Course</Button>
                             </Col>
                         </Row>
-                        <Modal show={showModal} onHide={() => setShowModal(false)}>
-                            <Modal.Header closeButton>
-                                <Modal.Title>{selectedCourseId ? 'Update Course' : 'Create Course'}</Modal.Title>
-                            </Modal.Header>
-                            <Modal.Body>
-                                <Form>
-                                    <Form.Group controlId="formCourseName">
-                                        <Form.Label>Course Name</Form.Label>
-                                        <Form.Control
-                                            type="text"
-                                            placeholder="Enter course name (e.g., CS 3214)"
-                                            value={courseName}
-                                            onChange={(e) => setCourseName(e.target.value)}
-                                        />
-                                    </Form.Group>
-                                    <Form.Group controlId="formTerm">
-                                        <Form.Label>Term</Form.Label>
-                                        <Form.Control
-                                            type="text"
-                                            placeholder="Enter term (e.g., Fall 2024)"
-                                            value={term}
-                                            onChange={(e) => setTerm(e.target.value)}
-                                        />
-                                    </Form.Group>
-                                    <Form.Group controlId="formCrn">
-                                        <Form.Label>CRN</Form.Label>
-                                        <Form.Control
-                                            type="text"
-                                            placeholder="Enter CRN"
-                                            value={crn}
-                                            onChange={(e) => setCrn(e.target.value)}
-                                        />
-                                    </Form.Group>
-                                </Form>
-                            </Modal.Body>
-                            <Modal.Footer>
-                                <Button variant="secondary" onClick={() => setShowModal(false)}>
-                                    Close
-                                </Button>
-                                <Button variant="primary" onClick={selectedCourseId ? handleUpdateCourse : handleCreateCourse}>
-                                    {selectedCourseId ? 'Update Course' : 'Create Course'}
-                                </Button>
-                            </Modal.Footer>
-                        </Modal>
+                        <CreateCourseModal
+                            show={showModal}
+                            handleClose={() => setShowModal(false)}
+                            courseName={courseName}
+                            setCourseName={setCourseName}
+                            term={term}
+                            setTerm={setTerm}
+                            crn={crn}
+                            setCrn={setCrn}
+                            handleSave={selectedCourseId ? handleUpdateCourse : handleCreateCourse}
+                            isUpdate={Boolean(selectedCourseId)}
+                        />
                         <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
                             <Modal.Header closeButton>
                                 <Modal.Title>Confirm Delete</Modal.Title>
