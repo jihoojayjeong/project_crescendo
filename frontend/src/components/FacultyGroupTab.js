@@ -2,17 +2,17 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { Button, Modal } from 'react-bootstrap';
-import { FaEdit } from 'react-icons/fa';  // FontAwesome의 연필 아이콘 사용
+import { FaEdit } from 'react-icons/fa';
 import '../styles/groupsTab.css';
 
 const FacultyGroupTab = () => {
   const { courseId } = useParams();
-  const [students, setStudents] = useState([]);  // 모든 학생 목록
-  const [selectedStudents, setSelectedStudents] = useState([]);  // 선택된 학생 목록
-  const [groups, setGroups] = useState([]);  // 생성된 그룹들
-  const [showModal, setShowModal] = useState(false);  // 모달 상태
-  const [nextGroupNumber, setNextGroupNumber] = useState(1);  // 다음 그룹 번호
-  const [editingGroup, setEditingGroup] = useState(null);  // 현재 편집 중인 그룹
+  const [students, setStudents] = useState([]);
+  const [selectedStudents, setSelectedStudents] = useState([]);
+  const [groups, setGroups] = useState([]); 
+  const [showModal, setShowModal] = useState(false); 
+  const [nextGroupNumber, setNextGroupNumber] = useState(1);
+  const [editingGroup, setEditingGroup] = useState(null);
 
   useEffect(() => {
     const fetchGroupsAndStudents = async () => {
@@ -29,8 +29,8 @@ const FacultyGroupTab = () => {
             'Content-Type': 'application/json'
           }
         });
-        setStudents(studentsResponse.data);  // 모든 학생 목록 설정
-        setGroups(groupsResponse.data.groups);  // 그룹 데이터 설정
+        setStudents(studentsResponse.data);  
+        setGroups(groupsResponse.data.groups);  
 
         if (groupsResponse.data.groups.length > 0) {
           const lastGroupNumber = Math.max(...groupsResponse.data.groups.map(group => group.groupNumber));
