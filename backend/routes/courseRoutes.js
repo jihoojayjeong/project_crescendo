@@ -11,5 +11,9 @@ router.delete('/:courseId', courseController.deleteCourse);
 router.get('/user/courses', courseController.getRegisteredCourses); 
 router.get('/:courseId/students', courseController.getStudentsInCourse);
 router.delete('/:courseId/students/:studentId', courseController.deleteStudentFromCourse);
+router.post('/:courseId/createGroups', courseController.createGroups);
+router.get('/:courseId/groups', courseController.getGroups);
+router.post('/:courseId/saveGroups', courseController.saveGroups);
+
 
 module.exports = router;

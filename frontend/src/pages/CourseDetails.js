@@ -8,6 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import FacultySidebar from '../components/FacultySidebar';
 import StudentsTab from '../components/StudentsTab'; 
+import FacultyGroupTab from '../components/FacultyGroupTab'
 
 const MainContent = ({ children, isSidebarOpen }) => (
     <div style={{
@@ -118,17 +119,24 @@ const CourseDetails = () => {
                                 <Nav.Link eventKey="students">Students</Nav.Link>
                             </Nav.Item>
                             <Nav.Item>
+                                <Nav.Link eventKey="groups">Groups</Nav.Link>
+                            </Nav.Item>
+                            <Nav.Item>
                                 <Nav.Link eventKey="feedbacks">Feedbacks</Nav.Link>
                             </Nav.Item>
                         </Nav>
                         <Tab.Content>
-                            <Tab.Pane eventKey="assignments">
-                                <h2>Assignments</h2>
+                            <Tab.Pane eventKey="assignment">
+                                <h2>Assignmentss</h2>
                                 {/* Assignments content here */}
                             </Tab.Pane>
                             <Tab.Pane eventKey="students">
                                 <StudentsTab />
                             </Tab.Pane>
+                            <Tab.Pane eventKey="groups">
+                                <FacultyGroupTab />
+                            </Tab.Pane>
+                            
                             <Tab.Pane eventKey="feedbacks">
                                 <h2>Feedbacks</h2>
                                 {/* Feedbacks content here */}

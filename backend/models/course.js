@@ -18,8 +18,16 @@ const courseSchema = new mongoose.Schema({
     required: true,
     unique: true
   },
+  
   students : [{
     type: String
+  }],
+  groups: [{
+    groupNumber: Number,
+    members: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    }]
   }]
 }, {
   timestamps: true

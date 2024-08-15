@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: false, unique: true },
   isFirstLogin: { type: Boolean, default: true }, 
   createdAt: { type: Date, default: Date.now },
-  group: {type: String}
+  group: {type: String, required: false}
 });
 
 const User = mongoose.model('User', userSchema);

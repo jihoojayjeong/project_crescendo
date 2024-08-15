@@ -159,3 +159,78 @@ exports.deleteStudentFromCourse = async (req, res) => {
     res.status(500).json({ message: 'Failed to remove student from course' });
   }
 };
+
+exports.createGroups = async (req, res) => {
+  const { courseId } = req.params;
+  const { groupSize } = req.body //This refers the # of students in each group
+  try {
+    const course = await Course.findById(courseId).populate('students');
+
+    if (!course) {
+      return res.status(404).json({ message: 'Course not found' });
+    }
+    //Fetch student id
+    const studentIds = course.students;
+
+    // shuffle students
+    const shuffledStudents = studentIds.sort(() => Math.random() - 0.5);
+
+    // splits into groups
+    let groups = [];
+    for (let i = 0; i < shuffledStudents.length; i += groupSize) {
+      groups.push(shuffledStudents.slice(i, i + groupSize));
+    }
+
+    // save the group in the db
+    course.groups = groups.map((group, index) => ({
+      groupNumber: index + 1,
+      members: group
+    }));
+
+    await course.save();
+
+    res.status(200).json({ message: 'Groups created successfully', groups: course.groups });
+  } catch (error) {
+    console.error('Error creating groups:', error);
+    res.status(500).json({ message: 'Failed to create groups' });
+  }
+};
+
+exports.getGroups = async (req, res) => {
+  const { courseId } = req.params;
+
+  try {
+    const course = await Course.findById(courseId).populate('groups.members', 'name email');
+    
+    if (!course) {
+      return res.status(404).json({ message: 'Course not found' });
+    }
+
+    res.status(200).json({ groups: course.groups });
+  } catch (error) {
+    console.error('Error fetching groups:', error);
+    res.status(500).json({ message: 'Failed to fetch groups' });
+  }
+};
+
+exports.saveGroups = async (req, res) => {
+  const { courseId } = req.params;
+  const { groups } = req.body;
+
+  try {
+    const course = await Course.findById(courseId); 
+
+    if (!course) {
+      return res.status(404).json({ message: 'Course not found' });
+    }
+
+    course.groups = groups;
+    await course.save();
+
+    res.status(200).json({ message: 'Groups saved successfully' });
+  } catch (error) {
+    console.error('Error saving groups:', error);
+    res.status(500).json({ message: 'Failed to save groups' });
+  }
+};
+
