@@ -54,15 +54,15 @@ const FacultyGroupTab = () => {
   };
 
   const handleCreateGroup = () => {
-    setEditingGroup(null);  // 새로운 그룹 생성 시 편집 그룹 초기화
+    setEditingGroup(null); 
     setSelectedStudents([]);
-    setShowModal(true);  // 모달 표시
+    setShowModal(true); 
   };
 
   const handleEditGroup = (group) => {
-    setEditingGroup(group);  // 편집할 그룹 설정
-    setSelectedStudents(group.members);  // 그룹 멤버 선택
-    setShowModal(true);  // 모달 표시
+    setEditingGroup(group); 
+    setSelectedStudents(group.members);
+    setShowModal(true);
   };
 
   const handleSaveGroup = async () => {
@@ -73,27 +73,24 @@ const FacultyGroupTab = () => {
 
     let updatedGroups;
     if (editingGroup) {
-      // 그룹 수정
       updatedGroups = groups.map((group) =>
         group.groupNumber === editingGroup.groupNumber
           ? { ...group, members: selectedStudents }
           : group
       );
     } else {
-      // 새로운 그룹 생성
       const newGroup = {
         groupNumber: nextGroupNumber,
         members: selectedStudents
       };
       updatedGroups = [...groups, newGroup];
-      setNextGroupNumber(nextGroupNumber + 1);  // 다음 그룹 번호 증가
+      setNextGroupNumber(nextGroupNumber + 1);
     }
 
     setGroups(updatedGroups);
     setSelectedStudents([]);
-    setShowModal(false);  // 모달 닫기
+    setShowModal(false);
 
-    // 서버에 저장
     try {
       const response = await axios.post(`https://crescendo.cs.vt.edu:8080/courses/${courseId}/saveGroups`, 
       { groups: updatedGroups },
