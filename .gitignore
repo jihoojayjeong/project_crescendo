@@ -1,1 +1,8 @@
 node_modules
+/database/
+/database/journal/
+/database/diagnostic.data/
+/database/*.lock
+/database/WiredTiger
+/database/WiredTiger.*
+
