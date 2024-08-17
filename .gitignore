@@ -5,4 +5,9 @@ node_modules
 /database/*.lock
 /database/WiredTiger
 /database/WiredTiger.*
+/*.log
+*.pid
+*.sock
+.env
+database_backup/
 
