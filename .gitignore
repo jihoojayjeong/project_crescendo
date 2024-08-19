@@ -1,0 +1,10 @@
+node_modules
+
+# Ignore database files
+/database/
+/database/**
+
+# Ignore environment files
+env
+backend/.env
+frontend/.env
