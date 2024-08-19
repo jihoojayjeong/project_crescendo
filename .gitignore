@@ -8,3 +8,22 @@ node_modules
 env
 backend/.env
 frontend/.env
+
+# macOS system file
+.DS_Store
+
+# ssl key and cert
+private.key
+server.csr
+
+# nginx cofig
+nginx_proxy.pp
+nginx_proxy.te
+
+# https dir
+https:/
+
+#node, lock file
+/package-lock.json
+/pnpm-lock.yaml
+
