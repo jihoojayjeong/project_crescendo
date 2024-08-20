@@ -3,6 +3,7 @@ const xml2js = require('xml2js');
 const User = require('../models/user');
 const { CAS_VALIDATE_URL, CAS_SERVICE_URL, getUserRole } = require('../utils/casUtils');
 
+
 exports.handleDashboard = async (req, res) => {
   console.log('Request received at /Dashboard');
   console.log('Session data:', req.session);
@@ -94,4 +95,29 @@ const redirectUser = (req, res, role) => {
   } else {
     return res.status(403).send('Access denied');
   }
+};
+
+exports.fakeLogin = async (req, res) => {
+  if (req.session.user) {
+    return res.status(200).json({
+      message: 'Already logged in',
+      user: req.session.user
+    });
+  }
+
+  const fakeUser = {
+    pid: '12345678',
+    role: 'student',
+    name: 'John Doe',
+    email: 'johndoe@local.dev',
+    isFirstLogin: false,
+    group: 'Group A'
+  };
+
+  req.session.user = fakeUser;
+
+  res.status(200).json({
+    message: 'Fake login successful',
+    user: fakeUser
+  });
 };

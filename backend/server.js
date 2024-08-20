@@ -11,7 +11,7 @@ const { CAS_SERVICE_URL, CAS_VALIDATE_URL } = require('./utils/casUtils');
 const app = express();
 
 const corsOptions = {
-  origin: ['https://crescendo.cs.vt.edu', 'https://t4.ftcdn.net/jpg/04/10/43/77/360_F_410437733_hdq4Q3QOH9uwh0mcqAhRFzOKfrCR24Ta.jpg'],
+  origin: ['https://crescendo.cs.vt.edu', 'http://localhost:3000', process.env.profile_uri],
   optionsSuccessStatus: 200,
   credentials: true
 };

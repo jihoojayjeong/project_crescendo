@@ -35,13 +35,20 @@ const LoginPage = () => {
             const casLoginUrl = 'https://login.vt.edu/profile/cas/login?service=https://crescendo.cs.vt.edu:8080/auth/Dashboard';
             window.location.href = casLoginUrl;
         } else {
-            // in local, just hard code user's role since we cannot parse CAS login response.
-            const hardcodedRole = 'student';
-            if (hardcodedRole === 'student') {
-                window.location.href = '/Courses';
-            } else if (hardcodedRole === 'professor') {
-                window.location.href = '/Dashboard';
-            }
+            // call fakeLogin in dev
+            axios.get('/auth/fakeLogin')
+                .then(response => {
+                    const user = response.data.user;
+                    if (user.role === 'student') {
+                        window.location.href = '/Courses';
+                    } else if (user.role === 'professor') {
+                        window.location.href = '/Dashboard';
+                    }
+                })
+                .catch(error => {
+                    console.error('Fake login failed', error);
+                    toast.error('Fake login failed');
+                });
         }
     };
 
