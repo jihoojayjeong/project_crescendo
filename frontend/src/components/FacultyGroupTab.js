@@ -17,13 +17,13 @@ const FacultyGroupTab = () => {
   useEffect(() => {
     const fetchGroupsAndStudents = async () => {
       try {
-        const studentsResponse = await axios.get(`https://crescendo.cs.vt.edu:8080/courses/${courseId}/students`, {
+        const studentsResponse = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${courseId}/students`, {
           withCredentials: true,
           headers: {
             'Content-Type': 'application/json'
           }
         });
-        const groupsResponse = await axios.get(`https://crescendo.cs.vt.edu:8080/courses/${courseId}/groups`, {
+        const groupsResponse = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${courseId}/groups`, {
           withCredentials: true,
           headers: {
             'Content-Type': 'application/json'
@@ -92,7 +92,7 @@ const FacultyGroupTab = () => {
     setShowModal(false);
 
     try {
-      const response = await axios.post(`https://crescendo.cs.vt.edu:8080/courses/${courseId}/saveGroups`, 
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/courses/${courseId}/saveGroups`, 
       { groups: updatedGroups },
       {
         withCredentials: true,
