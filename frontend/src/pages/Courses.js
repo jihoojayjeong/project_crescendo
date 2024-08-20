@@ -6,9 +6,9 @@ import { Button, Card, Modal, Row, Col } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import '/home/sangwonlee/project_cresendo/frontend/src/styles/courseDetails.css';
+import '../styles/courseDetails.css';
 import FacultySidebar from '../components/FacultySidebar';
-import '/home/sangwonlee/project_cresendo/frontend/src/styles/courses.css';
+import '../styles/courses.css';
 import NameModal from '../components/NameModal';
 import CreateCourseModal from '../components/CreateCourseModal';
 

@@ -20,27 +20,35 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+const mongoUri = process.env.NODE_ENV === 'production' ? process.env.MONGO_URI_PROD : process.env.MONGO_URI_DEV;
+
 app.use(session({
   secret: 'your_secret_key',
   resave: false,
   saveUninitialized: true,
-  store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
-  cookie: { secure: true }
+  store: MongoStore.create({ mongoUrl: mongoUri }),
+  cookie: { secure: false } //set it 'true' in prod, but 'false' in dev.
 }));
 
-
 const PORT = process.env.PORT || 8080;
-const httpsOptions = {
-  key: fs.readFileSync('/home/sangwonlee/cert/key.pem'),
-  cert: fs.readFileSync('/home/sangwonlee/cert/crescendo.cs.vt.edu.crt')
-};
-
-https.createServer(httpsOptions, app).listen(PORT, () => {
+//Use HTTP instead of HTTPS only in dev.
+app.listen(PORT, () => {
   console.log(`Server started on ${PORT}`);
 });
 
+/**
+ * This part is for prod env
+ */
+// const httpsOptions = {
+//   key: fs.readFileSync(process.env.SSL_KEY_PATH),
+//   cert: fs.readFileSync(process.env.SSL_CERT_PATH)
+// };
 
-mongoose.connect(process.env.MONGO_URI)
+// https.createServer(httpsOptions, app).listen(PORT, () => {
+//   console.log(`Server started on ${PORT}`);
+// });
+
+mongoose.connect(mongoUri)
   .then(() => {
     console.log("Connected to db");
   })

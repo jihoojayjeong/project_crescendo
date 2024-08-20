@@ -4,7 +4,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
-import '/home/sangwonlee/project_cresendo/frontend/src/styles/Sidebar.css';
+import './styles/sidebar.css';
 
 
 

@@ -7,9 +7,11 @@ import 'react-toastify/dist/ReactToastify.css';
 const LoginPage = () => {
 
     useEffect(() => {
+    if(process.env.NODE_ENV !== 'development') {
         axios.get('/auth/checkSession')
             .then(response => {
                 const user = response.data.user;
+                //why twice? figure it out bc it's on the authRouter
                 if (user) {
                     if (user.role === 'student') {
                         window.location.href = '/Courses';
@@ -21,14 +23,26 @@ const LoginPage = () => {
             .catch(error => {
                 console.error('No active session', error);
             });
+    }
     }, []);
 
 
     const handleLogin = (event) => {
         event.preventDefault();
-        toast.info('Navigating to VT CAS login page...');
-        const casLoginUrl = 'https://login.vt.edu/profile/cas/login?service=https://crescendo.cs.vt.edu:8080/auth/Dashboard';
-        window.location.href = casLoginUrl;
+
+        if (process.env.NODE_ENV === 'production') {
+            toast.info('Navigating to VT CAS login page...');
+            const casLoginUrl = 'https://login.vt.edu/profile/cas/login?service=https://crescendo.cs.vt.edu:8080/auth/Dashboard';
+            window.location.href = casLoginUrl;
+        } else {
+            // in local, just hard code user's role since we cannot parse CAS login response.
+            const hardcodedRole = 'student';
+            if (hardcodedRole === 'student') {
+                window.location.href = '/Courses';
+            } else if (hardcodedRole === 'professor') {
+                window.location.href = '/Dashboard';
+            }
+        }
     };
 
     const headerBar = (

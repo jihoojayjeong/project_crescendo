@@ -6,7 +6,7 @@ import { Button, Nav, Card } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css'; 
-import '/home/sangwonlee/project_cresendo/frontend/src/styles/Sidebar.css';
+import '../styles/sidebar.css';
 import FacultySidebar from '../components/FacultySidebar';
 
 const Container = ({ children }) => (
