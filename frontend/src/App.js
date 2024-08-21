@@ -3,7 +3,6 @@ import LoginPage from './pages/loginPage';
 import FeedbackPage from './pages/Feedbackpage';
 import Dashboard from './pages/Dashboard';
 import GiveFeedback from './pages/GiveFeedback';
-import ManageStudents from './pages/ManageStudents';
 import Courses from './pages/Courses';
 import CourseComponent from './components/CourseComponents';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
@@ -23,7 +22,6 @@ function App() {
       <Route path="/Dashboard" element={<Dashboard />} />
       <Route path="/FeedbackPage" element={<FeedbackPage />} />
       <Route path="/GiveFeedback" element={<GiveFeedback />} />
-      <Route path="/ManageStudents" element={<ManageStudents />} />
       <Route path="/course/:courseId" element={<CourseComponent />} />
       <Route path="/Courses" element={<Courses />} />
     </Routes>

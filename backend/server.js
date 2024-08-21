@@ -11,7 +11,7 @@ const { CAS_SERVICE_URL, CAS_VALIDATE_URL } = require('./utils/casUtils');
 const app = express();
 
 const corsOptions = {
-  origin: ['https://crescendo.cs.vt.edu', 'https://t4.ftcdn.net/jpg/04/10/43/77/360_F_410437733_hdq4Q3QOH9uwh0mcqAhRFzOKfrCR24Ta.jpg'],
+  origin: ['https://crescendo.cs.vt.edu', process.env.profile_uri],
   optionsSuccessStatus: 200,
   credentials: true
 };
@@ -20,11 +20,13 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+const mongoUri = process.env.NODE_ENV === 'production' ? process.env.MONGO_URI_PROD : process.env.MONGO_URI_DEV;
+
 app.use(session({
   secret: 'your_secret_key',
   resave: false,
   saveUninitialized: true,
-  store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
+  store: MongoStore.create({ mongoUrl: mongoUri }),
   cookie: { secure: true }
 }));
 
@@ -40,7 +42,7 @@ https.createServer(httpsOptions, app).listen(PORT, () => {
 });
 
 
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect(mongoUri)
   .then(() => {
     console.log("Connected to db");
   })

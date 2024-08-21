@@ -11,7 +11,7 @@ const FeedbackPage = () => {
     }, []);
 
     const fetchFeedbacks = () => {
-        axios.get('https://crescendo.cs.vt.edu:8080/getFeedback')
+        axios.get(`${process.env.REACT_APP_API_URL}/getFeedback`)
             .then(response => {
                 setFeedbacks(response.data);
             })
