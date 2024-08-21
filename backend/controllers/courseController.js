@@ -55,6 +55,7 @@ exports.getCourses = async (req, res) => {
 
 exports.getRegisteredCourses = async (req, res) => {
   const userId = req.session.user_id;
+  console.log("Fetching courses for user ID:", userId);
   try {
     const courses = await Course.find({ students: userId });
     res.status(200).json(courses);
@@ -118,6 +119,7 @@ exports.deleteCourse = async (req, res) => {
 
 exports.getStudentsInCourse = async(req, res) => {
   const courseId = req.params.courseId;
+  console.log("Received request to fetch students for course ID:", courseId);
 
   try{
     const course = await Course.findById(courseId);
@@ -126,6 +128,7 @@ exports.getStudentsInCourse = async(req, res) => {
     }
 
     const students = await User.find({ pid : { $in : course.students}}, 'name email');
+    console.log("Found students:", students);
 
     res.status(200).json(students);
   } catch (error) {

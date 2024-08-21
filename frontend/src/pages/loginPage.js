@@ -39,9 +39,9 @@ const LoginPage = () => {
             axios.get('/auth/fakeLogin')
                 .then(response => {
                     const user = response.data.user;
-                    if (user.role === 'student') {
+                    if (user.role === 'students') {
                         window.location.href = '/Courses';
-                    } else if (user.role === 'professor') {
+                    } else if (user.role === 'student') {
                         window.location.href = '/Dashboard';
                     }
                 })

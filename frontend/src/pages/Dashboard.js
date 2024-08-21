@@ -43,7 +43,7 @@ const Dashboard = () => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const response = await axios.get('https://crescendo.cs.vt.edu:8080/user/getUser', {
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/user/getUser`, {
                     withCredentials: true,
                     headers: {
                         'Content-Type': 'application/json'
@@ -61,12 +61,13 @@ const Dashboard = () => {
 
         const fetchUserCourses = async () => {
             try {
-                const response = await axios.get('https://crescendo.cs.vt.edu:8080/courses/user/courses', {
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/courses/user/courses`, {
                     withCredentials: true,
                     headers: {
                         'Content-Type': 'application/json'
                     }
                 });
+                console.log("Fetched Courses: ", response.data);
                 setCourses(response.data);
             } catch (error) {
                 console.error('Error fetching user courses:', error);
@@ -78,6 +79,7 @@ const Dashboard = () => {
     }, []);
 
     const handleCourseClick = (courseId) => {
+        console.log('Navigating to course with ID:', courseId);
         navigate(`/course/${courseId}`, { state: {from: location.pathname}});
     };
 
@@ -93,7 +95,7 @@ const Dashboard = () => {
 
     const handleSaveName = async () => {
         try {
-            await axios.post('https://crescendo.cs.vt.edu:8080/user/saveName', { firstName, lastName }, {
+            await axios.post(`${process.env.REACT_APP_API_URL}user/saveName`, { firstName, lastName }, {
                 withCredentials: true,
                 headers: {
                     'Content-Type': 'application/json'
@@ -114,7 +116,7 @@ const Dashboard = () => {
 
     const handleCourseCodeSubmit = async () => {
         try {
-            const response = await axios.post('https://crescendo.cs.vt.edu:8080/courses/register', { uniqueCode: courseCode }, {
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/courses/register`, { uniqueCode: courseCode }, {
                 withCredentials: true,
                 headers: {
                     'Content-Type': 'application/json'

@@ -29,7 +29,6 @@ exports.handleDashboard = async (req, res) => {
     console.log('CAS response received'); 
 
     const user = await parseCasResponse(response.data);
-    console.log('Parsed CAS response:', user);
     const pid = user['cas:user'][0];
     const attributes = user['cas:attributes'][0];
     const email = attributes['cas:eduPersonPrincipalName'][0];
@@ -86,10 +85,10 @@ const parseCasResponse = (data) => {
 
 
 const redirectUser = (req, res, role) => {
-  if (role === 'student') {
+  if (role === 'students') {
     console.log("Redirecting to student page....");
     return res.redirect('https://crescendo.cs.vt.edu/Courses');
-  } else if (role === 'students') {
+  } else if (role === 'student') {
     console.log("Redirecting to faculty page....");
     return res.redirect('https://crescendo.cs.vt.edu/Dashboard');
   } else {
@@ -99,6 +98,7 @@ const redirectUser = (req, res, role) => {
 
 exports.fakeLogin = async (req, res) => {
   if (req.session.user) {
+    console.log("Session already exists:", req.session.user);
     return res.status(200).json({
       message: 'Already logged in',
       user: req.session.user
@@ -115,6 +115,13 @@ exports.fakeLogin = async (req, res) => {
   };
 
   req.session.user = fakeUser;
+  req.session.user_id = fakeUser.pid;
+
+  let dbUser = await User.findOne({ email: fakeUser.email });
+  if (!dbUser) {
+    dbUser = new User({ pid: fakeUser.pid, email: fakeUser.email, name: fakeUser.name, isFirstLogin: fakeUser.isFirstLogin });
+    await dbUser.save();
+  }
 
   res.status(200).json({
     message: 'Fake login successful',

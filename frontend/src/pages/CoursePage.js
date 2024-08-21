@@ -29,7 +29,7 @@ const CoursePage = () => {
     useEffect(() => {
         const fetchCourseDetails = async () => {
             try {
-                const response = await axios.get(`https://crescendo.cs.vt.edu:8080/courses/${courseId}`, {
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${courseId}`, {
                     withCredentials: true,
                     headers: {
                         'Content-Type': 'application/json'
@@ -43,7 +43,7 @@ const CoursePage = () => {
 
         const fetchUserData = async () => {
             try {
-                const response = await axios.get('https://crescendo.cs.vt.edu:8080/user/getUser', {
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/user/getUser`, {
                     withCredentials: true,
                     headers: {
                         'Content-Type': 'application/json'
