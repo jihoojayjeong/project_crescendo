@@ -9,5 +9,8 @@ node_modules
 *.pid
 *.sock
 .env
-database_backup/
-
+/database_backup/
+*.wt
+*.lock
+*.key
+*.csr
