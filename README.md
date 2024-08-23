@@ -2,8 +2,6 @@
 
 Technical Stack : node.js, React, Express, MongoDB(NoSQL), nginx
 
-Devs : Jihoo Jeong (Sole project)
-
 **Motivation:**
 
 Many undergraduate courses, especially senior-level courses, involve project-based learning. For example, the Computer Science department at VT has many capstone courses which are designed “to synthesize and integrate skills and knowledge acquired throughout the CS undergraduate curriculum, and which includes a significant design experience, where teamwork and written and oral communication are a key part of that design experience [
