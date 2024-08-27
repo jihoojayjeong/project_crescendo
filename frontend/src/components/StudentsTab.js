@@ -10,7 +10,7 @@ const StudentsTab = () => {
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const response = await axios.get(`https://crescendo.cs.vt.edu:8080/courses/${courseId}/students`, {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${courseId}/students`, {
           withCredentials: true,
           headers: {
             'Content-Type': 'application/json'
@@ -32,7 +32,7 @@ const StudentsTab = () => {
     }
   
     try {
-      const response = await axios.delete(`https://crescendo.cs.vt.edu:8080/courses/${courseId}/students/${studentId}`, {
+      const response = await axios.delete(`${process.env.REACT_APP_API_URL}/courses/${courseId}/students/${studentId}`, {
         withCredentials: true,
         headers: {
           'Content-Type': 'application/json'

@@ -1,13 +1,28 @@
-node_modules
+# Ignore node_modules directory
+node_modules/
 
 # Ignore database files
 /database/
 /database/**
 
+# Additional database files to ignore
+/database/journal/
+/database/diagnostic.data/
+/database/*.lock
+/database/WiredTiger
+/database/WiredTiger.*
+/database_backup/
+
+# Ignore log, PID, and socket files
+/*.log
+*.pid
+*.sock
+
 # Ignore environment files
 env
 backend/.env
 frontend/.env
+.env
 
 # macOS system file
 .DS_Store
@@ -16,14 +31,12 @@ frontend/.env
 private.key
 server.csr
 
-# nginx cofig
+# nginx config
 nginx_proxy.pp
 nginx_proxy.te
 
 # https dir
 https:/
 
-#node, lock file
 /package-lock.json
 /pnpm-lock.yaml
-

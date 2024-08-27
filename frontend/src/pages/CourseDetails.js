@@ -29,10 +29,11 @@ const CourseDetails = () => {
     const navigate = useNavigate();
     const [userRole, setUserRole] = useState(null);
 
+//여기서 설정파일에 포트번호를 지정 안해서 오류가 났던것!
     useEffect(() => {
         const fetchCourseDetails = async () => {
             try {
-                const response = await axios.get(`https://crescendo.cs.vt.edu:8080/courses/${courseId}`, {
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${courseId}`, {
                     withCredentials: true,
                     headers: {
                         'Content-Type': 'application/json'
@@ -46,7 +47,7 @@ const CourseDetails = () => {
 
         const fetchUserData = async () => {
             try {
-                const response = await axios.get('https://crescendo.cs.vt.edu:8080/user/getUser', {
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/user/getUser`, {
                     withCredentials: true,
                     headers: {
                         'Content-Type': 'application/json'

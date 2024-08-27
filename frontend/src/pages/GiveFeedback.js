@@ -65,7 +65,7 @@ const GiveFeedback = () => {
             title: title,
             message: message
         };
-        axios.post('https://crescendo.cs.vt.edu:8080/saveFeedback', data)
+        axios.post(`${process.env.REACT_APP_API_URL}/saveFeedback`, data)
             .then(response => {
                 toast.success('Data sent successfully');
                 setTitle('');
@@ -73,15 +73,13 @@ const GiveFeedback = () => {
             })
             .catch(error => {
                 if (error.response) {
-                    // 서버가 응답을 반환한 경우 (4xx, 5xx 상태 코드)
+
                     toast.error(`SERVER error: ${error.response.data.message}`);
                     console.error('SERVER error:', error.response.data);
                 } else if (error.request) {
-                    // 요청이 전송되었으나 응답이 없는 경우
                     toast.error('NO response from server.');
                     console.error('NO response from server:', error.request);
                 } else {
-                    // 요청 설정 중에 발생한 오류
                     toast.error(`ERROR: ${error.message}`);
                     console.error('ERROR:', error.message);
                 }

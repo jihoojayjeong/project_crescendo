@@ -3,6 +3,7 @@ import { Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import '/Users/macbook/Desktop/Research/project_crescendo/frontend/src/styles/Sidebar.css';
+import '/home/sangwonlee/project_cresendo/frontend/src/styles/Sidebar.css';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';

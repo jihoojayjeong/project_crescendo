@@ -33,6 +33,7 @@ const LoginPage = () => {
         }
     }, [isLocalEnv]);
 
+
     const handleLogin = (event) => {
         event.preventDefault();
         toast.info('Navigating to VT CAS login page...');

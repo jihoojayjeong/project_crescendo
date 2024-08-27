@@ -7,8 +7,10 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import '../styles/courseDetails.css';
-import FacultySidebar from '../components/FacultySidebar';
 import '../styles/courses.css';
+import '/home/sangwonlee/project_cresendo/frontend/src/styles/courseDetails.css';
+import FacultySidebar from '../components/FacultySidebar';
+import '/home/sangwonlee/project_cresendo/frontend/src/styles/courses.css';
 import NameModal from '../components/NameModal';
 import CreateCourseModal from '../components/CreateCourseModal';
 
@@ -48,7 +50,7 @@ const Courses = () => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const response = await axios.get('https://crescendo.cs.vt.edu:8080/user/getUser', {
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/user/getUser`, {
                     withCredentials: true,
                     headers: {
                         'Content-Type': 'application/json'
@@ -66,7 +68,7 @@ const Courses = () => {
 
         const fetchCourses = async () => {
             try {
-                const response = await axios.get('https://crescendo.cs.vt.edu:8080/courses/', {
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/courses/`, {
                     withCredentials: true,
                     headers: {
                         'Content-Type': 'application/json'
@@ -98,7 +100,7 @@ const Courses = () => {
 
     const handleDeleteCourse = async () => {
         try {
-            const response = await axios.delete(`https://crescendo.cs.vt.edu:8080/courses/${selectedCourseId}`, {
+            const response = await axios.delete(`${process.env.REACT_APP_API_URL}/courses/${selectedCourseId}`, {
                 withCredentials: true,
                 headers: {
                     'Content-Type': 'application/json'
@@ -119,7 +121,7 @@ const Courses = () => {
 
     const handleUpdateCourse = async () => {
         try {
-            const response = await axios.put(`https://crescendo.cs.vt.edu:8080/courses/${selectedCourseId}`, {
+            const response = await axios.put(`${process.env.REACT_APP_API_URL}/courses/${selectedCourseId}`, {
                 name: courseName,
                 term: term,
                 crn: crn
@@ -153,7 +155,7 @@ const Courses = () => {
 
     const handleCreateCourse = async () => {
         try {
-            const response = await axios.post('https://crescendo.cs.vt.edu:8080/courses/create', {
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/courses/create`, {
                 name: courseName,
                 term: term,
                 crn: crn
@@ -181,7 +183,7 @@ const Courses = () => {
 
     const handleSaveName = async () => {
         try {
-            await axios.post('https://crescendo.cs.vt.edu:8080/user/saveName', { firstName, lastName }, {
+            await axios.post(`${process.env.REACT_APP_API_URL}/user/saveName`, { firstName, lastName }, {
                 withCredentials: true,
                 headers: {
                     'Content-Type': 'application/json'

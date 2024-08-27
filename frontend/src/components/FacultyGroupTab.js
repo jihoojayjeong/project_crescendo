@@ -17,13 +17,15 @@ const FacultyGroupTab = () => {
   useEffect(() => {
     const fetchGroupsAndStudents = async () => {
       try {
-        const studentsResponse = await axios.get(`https://crescendo.cs.vt.edu:8080/courses/${courseId}/students`, {
+
+        const studentsResponse = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${courseId}/students`, {
           withCredentials: true,
           headers: {
             'Content-Type': 'application/json'
           }
         });
-        const groupsResponse = await axios.get(`https://crescendo.cs.vt.edu:8080/courses/${courseId}/groups`, {
+
+        const groupsResponse = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${courseId}/groups`, {
           withCredentials: true,
           headers: {
             'Content-Type': 'application/json'
@@ -54,16 +56,20 @@ const FacultyGroupTab = () => {
   };
 
   const handleCreateGroup = () => {
-    setEditingGroup(null);  // 새로운 그룹 생성 시 편집 그룹 초기화
+    setEditingGroup(null); 
     setSelectedStudents([]);
-    setShowModal(true);  // 모달 표시
+    setShowModal(true);
   };
 
   const handleEditGroup = (group) => {
-    setEditingGroup(group);  // 편집할 그룹 설정
-    setSelectedStudents(group.members);  // 그룹 멤버 선택
-    setShowModal(true);  // 모달 표시
+    setEditingGroup(group);  
+    setSelectedStudents(group.members);  
+    setShowModal(true); 
+    setEditingGroup(null); 
+    setSelectedStudents([]);
+    setShowModal(true); 
   };
+
 
   const handleSaveGroup = async () => {
     if (selectedStudents.length === 0) {
@@ -73,14 +79,12 @@ const FacultyGroupTab = () => {
 
     let updatedGroups;
     if (editingGroup) {
-      // 그룹 수정
       updatedGroups = groups.map((group) =>
         group.groupNumber === editingGroup.groupNumber
           ? { ...group, members: selectedStudents }
           : group
       );
     } else {
-      // 새로운 그룹 생성
       const newGroup = {
         groupNumber: nextGroupNumber,
         members: selectedStudents
@@ -91,11 +95,10 @@ const FacultyGroupTab = () => {
 
     setGroups(updatedGroups);
     setSelectedStudents([]);
-    setShowModal(false);  // 모달 닫기
+    setShowModal(false);
 
-    // 서버에 저장
     try {
-      const response = await axios.post(`https://crescendo.cs.vt.edu:8080/courses/${courseId}/saveGroups`, 
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/courses/${courseId}/saveGroups`, 
       { groups: updatedGroups },
       {
         withCredentials: true,
@@ -133,7 +136,7 @@ const FacultyGroupTab = () => {
         ))}
       </div>
 
-      {/* 모달 */}
+
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>{editingGroup ? `Edit Group ${editingGroup.groupNumber}` : `Create Group ${nextGroupNumber}`}</Modal.Title>
