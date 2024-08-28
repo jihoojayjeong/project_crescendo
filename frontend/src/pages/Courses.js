@@ -8,9 +8,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import '../styles/courseDetails.css';
 import '../styles/courses.css';
-import '/home/sangwonlee/project_cresendo/frontend/src/styles/courseDetails.css';
+// import '/home/sangwonlee/project_cresendo/frontend/src/styles/courseDetails.css';
+import '../styles/courseDetails.css'
 import FacultySidebar from '../components/FacultySidebar';
-import '/home/sangwonlee/project_cresendo/frontend/src/styles/courses.css';
+// import '/home/sangwonlee/project_cresendo/frontend/src/styles/courses.css';
+import '../styles/courses.css'
 import NameModal from '../components/NameModal';
 import CreateCourseModal from '../components/CreateCourseModal';
 

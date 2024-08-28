@@ -3,10 +3,7 @@ const xml2js = require('xml2js');
 const User = require('../models/user');
 const { CAS_VALIDATE_URL, CAS_SERVICE_URL, getUserRole } = require('../utils/casUtils');
 
-exports.handleDashboard = async (req, res) => {
-  /**
-   * Skip login auth in local env
-   */
+exports.handleAuthentication = async (req, res) => {
   if(process.env.NODE_ENV === 'development') {
     req.session.user = {
       pid: 'test_pid',
@@ -15,11 +12,11 @@ exports.handleDashboard = async (req, res) => {
     };
     req.session.user_id = 'test_pid';
     
-    return redirectUser(req, res, req.session.user.role);
+    return redirectUserBasedOnRole(req, res, req.session.user.role);
   }
-  //prod env here
+
   if (req.session.user) {
-    return redirectUser(req, res, req.session.user.role);
+    return redirectUserBasedOnRole(req, res, req.session.user.role);
   }
 
   const { ticket } = req.query;
@@ -52,7 +49,7 @@ exports.handleDashboard = async (req, res) => {
       req.session.user.isFirstLogin = false;
     }
 
-    redirectUser(req, res, role);
+    redirectUserBasedOnRole(req, res, role);
   } catch (error) {
     console.error('CAS ticket validation failed:', error);
     res.status(500).send('Ticket validation failed');
@@ -66,6 +63,54 @@ exports.checkSession = (req, res) => {
 
   res.status(200).json({
     user: req.session.user
+  });
+};
+
+const redirectUserBasedOnRole = (req, res, role) => {
+  const redirectBaseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : process.env.PROD_REDIRECT_URL;
+
+  if (role === 'student') {
+    console.log("Redirecting to student page....");
+    return res.redirect(`${redirectBaseUrl}/Courses`);
+  } else if (role === 'faculty') {
+    console.log("Redirecting to faculty page....");
+    return res.redirect(`${redirectBaseUrl}/Dashboard`);
+  } else {
+    return res.status(403).send('Access denied');
+  }
+};
+
+exports.fakeLogin = async (req, res) => {
+  console.log("HERE in FAKE LOGIN!!!");
+  if (req.session.user) {
+    console.log("Session already exists:", req.session.user);
+    return res.status(200).json({
+      message: 'Already logged in',
+      user: req.session.user
+    });
+  }
+
+  const fakeUser = {
+    pid: '12345678',
+    role: 'student',
+    name: 'John Doe',
+    email: 'johndoe@local.dev',
+    isFirstLogin: false,
+    //group: 'Group A'
+  };
+
+  req.session.user = fakeUser;
+  req.session.user_id = fakeUser.pid;
+
+  let dbUser = await User.findOne({ email: fakeUser.email });
+  if (!dbUser) {
+    dbUser = new User({ pid: fakeUser.pid, email: fakeUser.email, name: fakeUser.name, isFirstLogin: fakeUser.isFirstLogin });
+    await dbUser.save();
+  }
+
+  res.status(200).json({
+    message: 'Test login successful',
+    user: fakeUser
   });
 };
 
@@ -83,55 +128,5 @@ const parseCasResponse = (data) => {
         reject(new Error('CAS authentication failed'));
       }
     });
-  });
-};
-
-
-const redirectUser = (req, res, role) => {
-  const redirectBaseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : process.env.PROD_REDIRECT_URL;
-
-  if (role === 'student') {
-    console.log("Redirecting to student page....");
-    return res.redirect(`${redirectBaseUrl}/Courses`);
-  } else if (role === 'faculty') {
-    console.log("Redirecting to faculty page....");
-    return res.redirect(`${redirectBaseUrl}/Dashboard`);
-  }
-  else {
-    return res.status(403).send('Access denied');
-  }
-}
-
-// This function is only used in development environment (NODE_ENV=development)
-exports.fakeLogin = async (req, res) => {
-  if (req.session.user) {
-    console.log("Session already exists:", req.session.user);
-    return res.status(200).json({
-      message: 'Already logged in',
-      user: req.session.user
-    });
-  }
-
-  const fakeUser = {
-    pid: '12345678',
-    role: 'student',
-    name: 'John Doe',
-    email: 'johndoe@local.dev',
-    isFirstLogin: false,
-    group: 'Group A'
-  };
-
-  req.session.user = fakeUser;
-  req.session.user_id = fakeUser.pid;
-
-  let dbUser = await User.findOne({ email: fakeUser.email });
-  if (!dbUser) {
-    dbUser = new User({ pid: fakeUser.pid, email: fakeUser.email, name: fakeUser.name, isFirstLogin: fakeUser.isFirstLogin });
-    await dbUser.save();
-  }
-
-  res.status(200).json({
-    message: 'Fake login successful',
-    user: fakeUser
   });
 };

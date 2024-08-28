@@ -1,6 +1,10 @@
-require('dotenv').config();
+require('dotenv').config({
+  path: `.env.${process.env.NODE_ENV}`
+});
+console.log(`Loaded environment variables from .env.${process.env.NODE_ENV}`);
 const fs = require('fs');
 const https = require('https');
+const http = require('http');
 const express = require('express');
 const session = require('express-session');
 const cors = require('cors');
@@ -11,7 +15,7 @@ const { CAS_SERVICE_URL, CAS_VALIDATE_URL } = require('./utils/casUtils');
 const app = express();
 
 const corsOptions = {
-  origin: ['https://crescendo.cs.vt.edu', process.env.profile_uri],
+  origin: process.env.CORS_ORIGIN,
   optionsSuccessStatus: 200,
   credentials: true
 };
@@ -25,27 +29,11 @@ app.use(session({
   resave: false,
   saveUninitialized: true,
   store: MongoStore.create({ mongoUrl: mongoUri }),
-  cookie: { secure: true }
+  cookie: { secure: process.env.NODE_ENV === 'production' }
 }));
 
 
 const PORT = process.env.PORT || 8080;
-
-app.listen(PORT, () =>{
-  console.log(`Server started on ${PORT}`);
-})
-
-
-mongoose.connect(process.env.MONGO_URI)
-const httpsOptions = {
-  key: fs.readFileSync('/home/sangwonlee/cert/key.pem'),
-  cert: fs.readFileSync('/home/sangwonlee/cert/crescendo.cs.vt.edu.crt')
-};
-
-https.createServer(httpsOptions, app).listen(PORT, () => {
-  console.log(`Server started on ${PORT}`);
-});
-
 
 mongoose.connect(mongoUri)
   .then(() => {
@@ -57,3 +45,19 @@ app.use('/auth', require('./routes/authRoutes'));
 app.use('/courses', require('./routes/courseRoutes'));
 app.use('/feedback', require('./routes/feedbackRoutes'));
 app.use('/user', require('./routes/userRoutes'));
+
+
+if (process.env.NODE_ENV === 'production') {
+  const httpsOptions = {
+    key: fs.readFileSync('/home/sangwonlee/cert/key.pem'),
+    cert: fs.readFileSync('/home/sangwonlee/cert/crescendo.cs.vt.edu.crt')
+  };
+  https.createServer(httpsOptions, app).listen(PORT, () => {
+    console.log(`HTTPS Server started on ${PORT}`);
+  });
+} else {
+  http.createServer(app).listen(PORT, () => {
+    console.log(`HTTP Server started on ${PORT}`);
+  });
+}
+

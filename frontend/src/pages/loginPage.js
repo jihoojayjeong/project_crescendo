@@ -5,43 +5,37 @@ import React, { useEffect, useState } from 'react';
 import 'react-toastify/dist/ReactToastify.css';
 
 const LoginPage = () => {
-    const [isLocalEnv, setIsLocalEnv] = useState(false);
-
+    const [isLocalEnv] = useState(process.env.NODE_ENV === 'development');
     useEffect(() => {
-        setIsLocalEnv(process.env.NODE_ENV === 'development');
-        
-        if (isLocalEnv) {
-            // redirect to the Dashboard in local env
-            window.location.href = 'http://localhost:3000/Dashboard';
-        } else {
-            // Check auth in prod evn
+        if (!isLocalEnv) {
             axios.get('/auth/checkSession')
                 .then(response => {
                     const user = response.data.user;
                     if (user) {
-                        const redirectBaseUrl = 'https://crescendo.cs.vt.edu';
-                        if (user.role === 'student') {
-                            window.location.href = `${redirectBaseUrl}/Courses`;
-                        } else if (user.role === 'professor') {
-                            window.location.href = `${redirectBaseUrl}/Dashboard`;
-                        }
+                        window.location.href = user.role === 'student' ? '/Dashboard' : '/Courses';
                     }
                 })
                 .catch(error => {
-                    console.error('No active session', error);
+                    console.error('No Session Found.', error);
                 });
         }
     }, [isLocalEnv]);
 
-
     const handleLogin = (event) => {
         event.preventDefault();
         toast.info('Navigating to VT CAS login page...');
+        
         if(isLocalEnv) {
-            window.location.href = 'http://localhost:3000/Dashboard';
+            console.log("THIS IS LOCAL!");
+            axios.get('/auth/fakeLogin')
+                .then(response => {
+                    window.location.href = 'http://localhost:3000/Dashboard';
+                })
+                .catch(error => {
+                    console.error('Failed to fake login', error);
+                });
         } else {
-            toast.info('Navigating to VT CAS login page...');
-            window.location.href = 'https://login.vt.edu/profile/cas/login?service=https://crescendo.cs.vt.edu/auth/Dashboard';
+            window.location.href = process.env.REACT_APP_CAS_LOGIN_URL;
         }
     };
 
