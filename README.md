@@ -24,3 +24,11 @@ PI Lee has developed and applied a novel peer-review feedback system in his Crea
 
 ]). Then one student will get their grades from 9 different teams, eventually becoming the student’s final grade for the assignment (5% of the course grade). This crowdsourced peer-review system has been developed over four iterations of the same course and is now used consistently. Here’s a sample spreadsheet that one team received from their peers. The PI anticipates multiple benefits of this system. First, students can practice giving constructive feedback, as their grade depends on the quality of the feedback. Second, each team may take the crowdsourced feedback more seriously than the instructor’s feedback as they find some common theme that emerges from multiple students. Third, the entire class can develop a sense of community as they give feedback to their peers over the semester, witnessing the progress of each team as a result of forced peer-review systems.
 >>>>>>> 14ff959f9eb8edf1bf979cc421eeaa1a56648435
+
+- Impossible to deploy using github action because of the domain restriction.
+ - instead of using github workflow, we are using deploy.sh to deploy the backend server.
+ - how to deploy : 
+ 1. run "bash deploy.sh" on local server
+
+
+ 

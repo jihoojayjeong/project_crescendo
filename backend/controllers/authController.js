@@ -4,6 +4,8 @@ const User = require('../models/user');
 const { CAS_VALIDATE_URL, CAS_SERVICE_URL, getUserRole } = require('../utils/casUtils');
 
 exports.handleAuthentication = async (req, res) => {
+  console.log('handleAuthentication called');
+  console.log('Request query:', req.query);
   if(process.env.NODE_ENV === 'development') {
     req.session.user = {
       pid: 'test_pid',
@@ -57,10 +59,13 @@ exports.handleAuthentication = async (req, res) => {
 };
 
 exports.checkSession = (req, res) => {
+  console.log('checkSession called');
   if (!req.session.user) {
+    console.log('No user in session');
     return res.status(401).send('User not authenticated');
   }
 
+  console.log('User in session:', req.session.user);
   res.status(200).json({
     user: req.session.user
   });
@@ -68,7 +73,7 @@ exports.checkSession = (req, res) => {
 
 const redirectUserBasedOnRole = (req, res, role) => {
   const redirectBaseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : process.env.PROD_REDIRECT_URL;
-
+  console.log("Redirecting to:", redirectBaseUrl);
   if (role === 'student') {
     console.log("Redirecting to student page....");
     return res.redirect(`${redirectBaseUrl}/Courses`);

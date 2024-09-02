@@ -1,7 +1,8 @@
 require('dotenv').config({
   path: `.env.${process.env.NODE_ENV}`
 });
-console.log(`Loaded environment variables from .env.${process.env.NODE_ENV}`);
+console.log(`Loaded environment variablessssss from .env.${process.env.NODE_ENV}`);
+console.log("MONGO_URI_PROD:", process.env.MONGO_URI_PROD);
 const fs = require('fs');
 const https = require('https');
 const http = require('http');
@@ -24,6 +25,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 const mongoUri = process.env.NODE_ENV === 'production' ? process.env.MONGO_URI_PROD : process.env.MONGO_URI_DEV;
+console.log("MONGO URI: ", mongoUri);
 app.use(session({
   secret: 'your_secret_key',
   resave: false,
@@ -32,6 +34,10 @@ app.use(session({
   cookie: { secure: process.env.NODE_ENV === 'production' }
 }));
 
+app.use((req, res, next) => {
+  console.log(`Received request: ${req.method} ${req.url}`);
+  next();
+});
 
 const PORT = process.env.PORT || 8080;
 
@@ -40,7 +46,7 @@ mongoose.connect(mongoUri)
     console.log("Connected to db");
   })
   .catch((err) => console.log(err));
-
+  
 app.use('/auth', require('./routes/authRoutes'));
 app.use('/courses', require('./routes/courseRoutes'));
 app.use('/feedback', require('./routes/feedbackRoutes'));

@@ -35,6 +35,7 @@ const LoginPage = () => {
                     console.error('Failed to fake login', error);
                 });
         } else {
+            console.log("Redirecting to CAS login URL:", process.env.REACT_APP_CAS_LOGIN_URL);
             window.location.href = process.env.REACT_APP_CAS_LOGIN_URL;
         }
     };
