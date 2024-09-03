@@ -60,4 +60,11 @@
   .student-item input {
     margin-right: 10px;
   }
+
+  .group-add-text {
+    font-family: 'Arial', sans-serif;
+    color: gray;
+    font-size: 14px; 
+    margin-top: 10px; 
+  }
   

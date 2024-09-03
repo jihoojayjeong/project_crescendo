@@ -1,6 +1,7 @@
 const Course = require('../models/course');
 const User = require('../models/user'); 
 const { v4: uuidv4 } = require('uuid'); 
+const mongoose = require('mongoose');
 
 exports.createCourse = async (req, res) => {
   const { name, term, crn } = req.body;
@@ -218,19 +219,90 @@ exports.saveGroups = async (req, res) => {
   const { groups } = req.body;
 
   try {
-    const course = await Course.findById(courseId); 
-
+    const course = await Course.findById(courseId);
     if (!course) {
       return res.status(404).json({ message: 'Course not found' });
     }
 
-    course.groups = groups;
+    const existingGroups = course.groups.map(group => ({
+      groupNumber: group.groupNumber,
+      members: group.members.map(member => member._id)
+    }));
+
+    const newGroups = groups.map(group => ({
+      groupNumber: group.groupNumber,
+      members: group.members.map(member => new mongoose.Types.ObjectId(member._id || member))
+    }));
+
+    const mergedGroups = [...existingGroups, ...newGroups].reduce((acc, group) => {
+      const existingGroup = acc.find(g => g.groupNumber === group.groupNumber);
+      if (existingGroup) {
+        existingGroup.members = group.members;
+      } else {
+        acc.push(group);
+      }
+      return acc;
+    }, []);
+
+    course.groups = mergedGroups;
+
     await course.save();
 
-    res.status(200).json({ message: 'Groups saved successfully' });
+    // Populate the members data before sending the response
+    await course.populate('groups.members', 'name email');
+
+    res.status(200).json({ groups: course.groups });
   } catch (error) {
     console.error('Error saving groups:', error);
-    res.status(500).json({ message: 'Failed to save groups' });
+    res.status(500).json({ message: 'Failed to save groups', error: error.message });
+  }
+};
+
+exports.deleteGroup = async (req, res) => {
+  const { courseId, groupId } = req.params;
+
+  try {
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ message: 'Course not found' });
+    }
+
+    course.groups = course.groups.filter(group => group._id.toString() !== groupId);
+    await course.save();
+
+    res.status(200).json({ message: 'Group deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting group:', error);
+    res.status(500).json({ message: 'Failed to delete group' });
+  }
+};
+
+exports.addStudentToCourse = async (req, res) => {
+  const { courseId } = req.params;
+  const { studentEmail } = req.body;
+
+  try {
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ message: 'Course not found' });
+    }
+
+    const student = await User.findOne({ email: studentEmail });
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found' });
+    }
+
+    if (course.students.includes(student.pid)) {
+      return res.status(400).json({ message: 'Student already in the course' });
+    }
+
+    course.students.push(student.pid);
+    await course.save();
+
+    res.status(200).json({ message: 'Student added to course successfully', student: { name: student.name, email: student.email } });
+  } catch (error) {
+    console.error('Error adding student to course:', error);
+    res.status(500).json({ message: 'Failed to add student to course' });
   }
 };
 

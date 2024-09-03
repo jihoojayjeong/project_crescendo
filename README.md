@@ -27,8 +27,17 @@ PI Lee has developed and applied a novel peer-review feedback system in his Crea
 
 - Impossible to deploy using github action because of the domain restriction.
  - instead of using github workflow, we are using deploy.sh to deploy the backend server.
- - how to deploy : 
+ - how to build and deploy : 
  1. run "bash deploy.sh" on local server
+ 2. It will ask for the server ip address, username, and password.
+ 3. After the deployment is complete, you can access the website via the public ip address.
+
+ - For the dummy user data, we use scripts/seed.js to generate the dummy data.
+ - how to run the script : 
+ 1. run "node scripts/seedUsers.js" on local server
+ 2. run addUsersToCourse.js to add users to the course you want. Make sure to put the correct courseId.
+ 3. After the script is complete, you can access the website via the public ip address.
+
 
 
  

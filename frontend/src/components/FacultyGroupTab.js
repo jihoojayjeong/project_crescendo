@@ -2,22 +2,28 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { Button, Modal } from 'react-bootstrap';
-import { FaEdit } from 'react-icons/fa';
+import { FaEdit, FaTrash } from 'react-icons/fa';
 import '../styles/groupsTab.css';
+import CreateGroupModal from './CreateGroupModal';
+import EditGroupModal from './EditGroupModal';
 
 const FacultyGroupTab = () => {
   const { courseId } = useParams();
   const [students, setStudents] = useState([]);
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [groups, setGroups] = useState([]); 
-  const [showModal, setShowModal] = useState(false); 
-  const [nextGroupNumber, setNextGroupNumber] = useState(1);
+  const [showCreateModal, setShowCreateModal] = useState(false); 
+  const [showEditModal, setShowEditModal] = useState(false);
   const [editingGroup, setEditingGroup] = useState(null);
+  const [tempGroups, setTempGroups] = useState([]);
+  const [selectedGroup, setSelectedGroup] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [groupToDelete, setGroupToDelete] = useState(null);
+  const [availableGroupNumbers, setAvailableGroupNumbers] = useState([]);
 
   useEffect(() => {
     const fetchGroupsAndStudents = async () => {
       try {
-
         const studentsResponse = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${courseId}/students`, {
           withCredentials: true,
           headers: {
@@ -32,11 +38,14 @@ const FacultyGroupTab = () => {
           }
         });
         setStudents(studentsResponse.data);  
-        setGroups(groupsResponse.data.groups);  
+        const sortedGroups = groupsResponse.data.groups.sort((a, b) => a.groupNumber - b.groupNumber);
+        setGroups(sortedGroups);  
 
-        if (groupsResponse.data.groups.length > 0) {
-          const lastGroupNumber = Math.max(...groupsResponse.data.groups.map(group => group.groupNumber));
-          setNextGroupNumber(lastGroupNumber + 1);
+        if (sortedGroups.length > 0) {
+          const groupNumbers = sortedGroups.map(group => group.groupNumber);
+          const maxGroupNumber = Math.max(...groupNumbers);
+          const availableNumbers = Array.from({ length: maxGroupNumber }, (_, i) => i + 1).filter(num => !groupNumbers.includes(num));
+          setAvailableGroupNumbers(availableNumbers);
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -45,72 +54,139 @@ const FacultyGroupTab = () => {
     fetchGroupsAndStudents();
   }, [courseId]);
 
+  const handleSelectGroup = (group) => {
+    setSelectedGroup(group);
+    console.log('Selected group:', group);
+  };
+
   const handleSelectStudent = (student) => {
-    setSelectedStudents((prevSelected) => {
-      if (prevSelected.includes(student)) {
-        return prevSelected.filter((s) => s._id !== student._id);
-      } else {
-        return [...prevSelected, student];
-      }
+    if (!selectedGroup) {
+      alert("Please select a group first.");
+      return;
+    }
+
+    setTempGroups(prevGroups => {
+      return prevGroups.map(group => {
+        if (group.groupNumber === selectedGroup.groupNumber) {
+          const updatedMembers = group.members.some(m => m._id === student._id)
+            ? group.members.filter(m => m._id !== student._id)
+            : [...group.members, student];
+          return { ...group, members: updatedMembers };
+        }
+        return group;
+      });
+    });
+
+    setSelectedGroup(prevGroup => {
+      if (!prevGroup) return null;
+      const updatedMembers = prevGroup.members.some(m => m._id === student._id)
+        ? prevGroup.members.filter(m => m._id !== student._id)
+        : [...prevGroup.members, student];
+      return { ...prevGroup, members: updatedMembers };
+    });
+  };
+
+  const handleRemoveStudent = (student) => {
+    setTempGroups(prevGroups => {
+      return prevGroups.map(group => {
+        if (group.groupNumber === selectedGroup.groupNumber) {
+          const updatedMembers = group.members.filter(m => m._id !== student._id);
+          return { ...group, members: updatedMembers };
+        }
+        return group;
+      });
+    });
+
+    setSelectedGroup(prevGroup => {
+      if (!prevGroup) return null;
+      const updatedMembers = prevGroup.members.filter(m => m._id !== student._id);
+      return { ...prevGroup, members: updatedMembers };
     });
   };
 
   const handleCreateGroup = () => {
     setEditingGroup(null); 
     setSelectedStudents([]);
-    setShowModal(true);
+    setTempGroups([]);
+    setShowCreateModal(true);
+  };
+
+  const handleAddGroup = () => {
+    const newGroupNumber = availableGroupNumbers.length > 0 ? availableGroupNumbers[0] : (groups.length + tempGroups.length + 1);
+    const newGroup = {
+      groupNumber: newGroupNumber,
+      members: []
+    };
+    setTempGroups([...tempGroups, newGroup]);
+    setAvailableGroupNumbers(availableGroupNumbers.filter(num => num !== newGroupNumber));
   };
 
   const handleEditGroup = (group) => {
     setEditingGroup(group);  
     setSelectedStudents(group.members);  
-    setShowModal(true); 
-    setEditingGroup(null); 
-    setSelectedStudents([]);
-    setShowModal(true); 
+    setSelectedGroup(group);
+    setTempGroups(groups.map(g => g._id === group._id ? group : g)); // 현재 그룹 상태를 tempGroups에 복사
+    setShowEditModal(true); 
   };
 
+  const handleDeleteGroup = (group) => {
+    setGroupToDelete(group);
+    setShowDeleteModal(true);
+  };
 
-  const handleSaveGroup = async () => {
-    if (selectedStudents.length === 0) {
-      alert("Please select at least one student to form a group.");
-      return;
-    }
-
-    let updatedGroups;
-    if (editingGroup) {
-      updatedGroups = groups.map((group) =>
-        group.groupNumber === editingGroup.groupNumber
-          ? { ...group, members: selectedStudents }
-          : group
-      );
-    } else {
-      const newGroup = {
-        groupNumber: nextGroupNumber,
-        members: selectedStudents
-      };
-      updatedGroups = [...groups, newGroup];
-      setNextGroupNumber(nextGroupNumber + 1);  // 다음 그룹 번호 증가
-    }
-
-    setGroups(updatedGroups);
-    setSelectedStudents([]);
-    setShowModal(false);
-
+  const confirmDeleteGroup = async () => {
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/courses/${courseId}/saveGroups`, 
-      { groups: updatedGroups },
-      {
+      await axios.delete(`${process.env.REACT_APP_API_URL}/courses/${courseId}/groups/${groupToDelete._id}`, {
         withCredentials: true,
         headers: {
           'Content-Type': 'application/json'
         }
       });
-      alert('Group saved successfully!');
+      setGroups(groups.filter(group => group._id !== groupToDelete._id));
+      setAvailableGroupNumbers([...availableGroupNumbers, groupToDelete.groupNumber]);
+      setShowDeleteModal(false);
+      alert('Group deleted successfully!');
     } catch (error) {
-      console.error('Error saving group:', error);
+      console.error('Error deleting group:', error.response ? error.response.data : error.message);
+      alert('Failed to delete group. Please try again.');
+    }
+  };
+
+  const handleSaveGroup = async () => {
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/courses/${courseId}/saveGroups`, {
+        groups: tempGroups // 새로운 그룹만 저장
+      }, {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.status === 200) {
+        setGroups(response.data.groups);
+        setSelectedStudents([]);
+        setShowCreateModal(false);
+        setShowEditModal(false);
+        alert('Group saved successfully!');
+      } else {
+        throw new Error('Invalid response from server');
+      }
+    } catch (error) {
+      console.error('Error saving group:', error.response ? error.response.data : error.message);
       alert('Failed to save group. Please try again.');
     }
+  };
+
+  const getAvailableStudents = () => {
+    const assignedStudentIds = groups.flatMap(group => group.members.map(member => member._id));
+    return students.filter(student => !assignedStudentIds.includes(student._id));
+  };
+
+  const getStudentsForEdit = () => {
+    if (!selectedGroup) return [];
+    const assignedStudentIds = groups.flatMap(group => group.members.map(member => member._id));
+    return students.filter(student => !assignedStudentIds.includes(student._id));
   };
 
   return (
@@ -119,13 +195,13 @@ const FacultyGroupTab = () => {
         Create Group
       </Button>
 
-      <h3>Generated Groups</h3>
       <div className="groups-grid">
         {groups.map((group, index) => (
-          <div key={index} className="group-card">
+          <div key={index} className="group-card" onClick={() => handleEditGroup(group)}>
             <div className="group-card-header">
               <h4>Group {group.groupNumber}</h4>
-              <FaEdit className="edit-icon" onClick={() => handleEditGroup(group)} />
+              <FaEdit className="edit-icon" onClick={(e) => { e.stopPropagation(); handleEditGroup(group); }} />
+              <FaTrash className="delete-icon text-danger" onClick={(e) => { e.stopPropagation(); handleDeleteGroup(group); }} />
             </div>
             <ul>
               {group.members.map((member) => (
@@ -136,31 +212,43 @@ const FacultyGroupTab = () => {
         ))}
       </div>
 
+      <CreateGroupModal
+        show={showCreateModal}
+        onHide={() => setShowCreateModal(false)}
+        handleAddGroup={handleAddGroup}
+        tempGroups={tempGroups}
+        selectedGroup={selectedGroup}
+        handleSelectGroup={handleSelectGroup}
+        getAvailableStudents={getAvailableStudents}
+        handleSelectStudent={handleSelectStudent}
+        handleSaveGroup={handleSaveGroup}
+      />
 
-      <Modal show={showModal} onHide={() => setShowModal(false)}>
+      <EditGroupModal
+        show={showEditModal}
+        onHide={() => setShowEditModal(false)}
+        editingGroup={editingGroup}
+        selectedGroup={selectedGroup}
+        handleSelectGroup={handleSelectGroup}
+        getStudentsForEdit={getStudentsForEdit}
+        handleSelectStudent={handleSelectStudent}
+        handleSaveGroup={handleSaveGroup}
+        handleRemoveStudent={handleRemoveStudent}
+      />
+
+      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>{editingGroup ? `Edit Group ${editingGroup.groupNumber}` : `Create Group ${nextGroupNumber}`}</Modal.Title>
+          <Modal.Title>Confirm Delete</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div className="students-list">
-            {students.map((student) => (
-              <div key={student._id} className="student-item">
-                <input
-                  type="checkbox"
-                  checked={selectedStudents.includes(student)}
-                  onChange={() => handleSelectStudent(student)}
-                />
-                <span>{student.name} ({student.email})</span>
-              </div>
-            ))}
-          </div>
+          Are you sure you want to delete this group?
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModal(false)}>
+          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleSaveGroup}>
-            Save Group
+          <Button variant="danger" onClick={confirmDeleteGroup}>
+            Delete
           </Button>
         </Modal.Footer>
       </Modal>

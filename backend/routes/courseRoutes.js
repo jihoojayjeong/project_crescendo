@@ -14,6 +14,7 @@ router.delete('/:courseId/students/:studentId', courseController.deleteStudentFr
 router.post('/:courseId/createGroups', courseController.createGroups);
 router.get('/:courseId/groups', courseController.getGroups);
 router.post('/:courseId/saveGroups', courseController.saveGroups);
-
+router.delete('/:courseId/groups/:groupId', courseController.deleteGroup);
+router.post('/:courseId/addStudent', courseController.addStudentToCourse);
 
 module.exports = router;

@@ -87,36 +87,42 @@ const redirectUserBasedOnRole = (req, res, role) => {
 
 exports.fakeLogin = async (req, res) => {
   console.log("HERE in FAKE LOGIN!!!");
-  if (req.session.user) {
-    console.log("Session already exists:", req.session.user);
-    return res.status(200).json({
-      message: 'Already logged in',
-      user: req.session.user
+  try {
+    const { role } = req.body;
+    if (req.session.user) {
+      console.log("Session already exists:", req.session.user);
+      return res.status(200).json({
+        message: 'Already logged in',
+        user: req.session.user
+      });
+    }
+
+    const fakeUser = {
+      pid: '12345678',
+      role: role || 'student',
+      name: 'John Doe',
+      email: 'johndoe@local.dev',
+      isFirstLogin: false,
+      //group: 'Group A'
+    };
+
+    req.session.user = fakeUser;
+    req.session.user_id = fakeUser.pid;
+
+    let dbUser = await User.findOne({ email: fakeUser.email });
+    if (!dbUser) {
+      dbUser = new User({ pid: fakeUser.pid, email: fakeUser.email, name: fakeUser.name, isFirstLogin: fakeUser.isFirstLogin });
+      await dbUser.save();
+    }
+
+    res.status(200).json({
+      message: 'Test login successful',
+      user: fakeUser
     });
+  } catch (error) {
+    console.error('Fake login failed:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
   }
-
-  const fakeUser = {
-    pid: '12345678',
-    role: 'student',
-    name: 'John Doe',
-    email: 'johndoe@local.dev',
-    isFirstLogin: false,
-    //group: 'Group A'
-  };
-
-  req.session.user = fakeUser;
-  req.session.user_id = fakeUser.pid;
-
-  let dbUser = await User.findOne({ email: fakeUser.email });
-  if (!dbUser) {
-    dbUser = new User({ pid: fakeUser.pid, email: fakeUser.email, name: fakeUser.name, isFirstLogin: fakeUser.isFirstLogin });
-    await dbUser.save();
-  }
-
-  res.status(200).json({
-    message: 'Test login successful',
-    user: fakeUser
-  });
 };
 
 const parseCasResponse = (data) => {
