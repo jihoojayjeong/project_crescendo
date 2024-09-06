@@ -153,14 +153,11 @@ const FacultyGroupTab = ({ onGroupSave }) => {
 
   const handleSaveGroup = async () => {
     try {
-      // Combine existing groups with temp groups
       const updatedGroups = [...groups, ...tempGroups].reduce((acc, group) => {
         const existingGroupIndex = acc.findIndex(g => g.groupNumber === group.groupNumber);
         if (existingGroupIndex !== -1) {
-          // Update existing group
           acc[existingGroupIndex] = group;
         } else {
-          // Add new group
           acc.push(group);
         }
         return acc;

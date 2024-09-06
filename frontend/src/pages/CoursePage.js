@@ -4,7 +4,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import StudentSidebar from '../components/StudentSidebar';
+import TeamsTab from '../components/TeamsTab';
 import { FaBook, FaCalendar, FaHashtag, FaUsers } from 'react-icons/fa';
+import { handleLogout } from '../utils/casUtils';
 
 const MainContent = ({ children, isSidebarOpen }) => (
     <div className={`flex-1 transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-20'}`}>
@@ -70,12 +72,6 @@ const CoursePage = () => {
         navigate('/Dashboard');
     };
 
-    const handleLogout = () => {
-        const casLogoutUrl = 'https://login.vt.edu/profile/cas/logout';
-        const redirectionUrl = 'https://crescendo.cs.vt.edu/';
-        window.location.href = `${casLogoutUrl}?service=${encodeURIComponent(redirectionUrl)}`;
-    };
-
     if (!course) {
         return <div>Loading...</div>;
     }
@@ -107,7 +103,7 @@ const CoursePage = () => {
                                 </p>
                                 <p className="text-xl mb-2 text-gray-600 flex items-center">
                                     <FaUsers className="mr-2 text-maroon-800" /> Group: <span className="font-medium ml-1">
-                                        {course.userGroup}
+                                        {course.userGroup || 'Not assigned'}
                                     </span>
                                 </p>
                             </>
@@ -115,7 +111,7 @@ const CoursePage = () => {
                     </div>
                     <div className="bg-white shadow-md rounded-lg overflow-hidden">
                         <nav className="flex border-b border-gray-200">
-                            {['Assignments', 'Groups', 'Feedbacks'].map((tab) => (
+                            {['Teams', 'Assignments', 'Feedbacks'].map((tab) => (
                                 <button
                                     key={tab.toLowerCase()}
                                     onClick={() => setActiveTab(tab.toLowerCase())}
@@ -130,13 +126,12 @@ const CoursePage = () => {
                             ))}
                         </nav>
                         <div className="p-6">
+                            {activeTab === 'teams' && (
+                                <TeamsTab course={course} userGroup={course.userGroup} />
+                            )}
                             {activeTab === 'assignments' && (
                                 <h2 className="text-2xl font-semibold mb-4">Assignments</h2>
                                 // Assignments content here
-                            )}
-                            {activeTab === 'groups' && (
-                                <h2 className="text-2xl font-semibold mb-4">Groups</h2>
-                                // Groups content here
                             )}
                             {activeTab === 'feedbacks' && (
                                 <h2 className="text-2xl font-semibold mb-4">Feedbacks</h2>

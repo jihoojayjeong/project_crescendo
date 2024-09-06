@@ -7,6 +7,7 @@ import StudentSidebar from '../components/StudentSidebar';
 import NameModal from '../components/\bNameModal';
 import RegisterCourseModal from '../components/RegisterCourseModal';
 import { FaBook, FaCalendar, FaHashtag, FaPlus } from 'react-icons/fa';
+import { handleLogout } from '../utils/casUtils';
 
 const Dashboard = () => {
     const [isSidebarOpen, setSidebarOpen] = useState(true);
@@ -58,11 +59,6 @@ const Dashboard = () => {
 
     const toggleSidebar = () => setSidebarOpen(!isSidebarOpen);
 
-    const handleLogout = () => {
-        const casLogoutUrl = 'https://login.vt.edu/profile/cas/logout';
-        const redirectionUrl = 'https://crescendo.cs.vt.edu/';
-        window.location.href = `${casLogoutUrl}?service=${encodeURIComponent(redirectionUrl)}`;
-    };
 
     const handleSaveName = async () => {
         try {

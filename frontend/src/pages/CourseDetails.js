@@ -9,7 +9,7 @@ import FacultySidebar from '../components/FacultySidebar';
 import StudentsTab from '../components/StudentsTab'; 
 import FacultyGroupTab from '../components/FacultyGroupTab'
 import { FaBook, FaCalendar, FaHashtag, FaKey } from 'react-icons/fa';
-
+import { handleLogout } from '../utils/casUtils';
 const MainContent = ({ children, isSidebarOpen }) => (
     <div className={`flex-1 transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-20'}`}>
         {children}
@@ -65,12 +65,6 @@ const CourseDetails = () => {
     const handleClickCourses = (event) => {
         event.preventDefault();
         navigate('/Courses');
-    };
-
-    const handleLogout = () => {
-        const casLogoutUrl = 'https://login.vt.edu/profile/cas/logout';
-        const redirectionUrl = 'https://crescendo.cs.vt.edu/';
-        window.location.href = `${casLogoutUrl}?service=${encodeURIComponent(redirectionUrl)}`;
     };
 
     if (!course) {

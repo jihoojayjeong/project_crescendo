@@ -75,23 +75,14 @@ exports.getCourse = async (req, res) => {
       return res.status(404).json({ error: 'Course not found' });
     }
 
-    const user = await User.findOne({ pid: userId });
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-
     const courseData = course.toObject();
 
     // Find the group that the user belongs to in this course
-    const userGroupInCourse = courseData.groups.find(group => 
+    const userGroup = courseData.groups.find(group => 
       group.members.some(member => member.pid === userId)
     );
 
-    courseData.userGroupInCourse = userGroupInCourse ? userGroupInCourse.groupNumber.toString() : 'Not assigned';
-    courseData.userGroupFromUserModel = user.group || 'Not assigned';
-
-    console.log('User group from User model:', courseData.userGroupFromUserModel);
-    console.log('User group from Course data:', courseData.userGroupInCourse);
+    courseData.userGroup = userGroup ? userGroup.groupNumber.toString() : 'Not assigned';
 
     res.json(courseData);
   } catch (error) {

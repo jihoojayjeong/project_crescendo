@@ -9,7 +9,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import FacultySidebar from '../components/FacultySidebar';
 import CreateCourseModal from '../components/CreateCourseModal';
 import { FaBook, FaCalendar, FaHashtag, FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
-
+import { handleLogout } from '../utils/casUtils';
 const Courses = () => {
     const [isSidebarOpen, setSidebarOpen] = useState(true);
     const [user, setUser] = useState(null);
@@ -54,12 +54,6 @@ const Courses = () => {
     };
 
     const toggleSidebar = () => setSidebarOpen(!isSidebarOpen);
-
-    const handleLogout = () => {
-        const casLogoutUrl = 'https://login.vt.edu/profile/cas/logout';
-        const redirectionUrl = 'https://crescendo.cs.vt.edu/';
-        window.location.href = `${casLogoutUrl}?service=${encodeURIComponent(redirectionUrl)}`;
-    };
 
     const handleCourseClick = (courseId) => {
         navigate(`/course/${courseId}`, { state: { from: location.pathname } });
