@@ -8,6 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import FacultySidebar from '../components/FacultySidebar';
 import CreateCourseModal from '../components/CreateCourseModal';
+import { FaBook, FaCalendar, FaHashtag, FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
 
 const Courses = () => {
     const [isSidebarOpen, setSidebarOpen] = useState(true);
@@ -120,30 +121,61 @@ const Courses = () => {
             />
             <div className={`flex-1 p-10 ${isSidebarOpen ? 'ml-64' : 'ml-20'} transition-all duration-300`}>
                 <h1 className="text-3xl font-semibold text-gray-800 mb-6">Courses</h1>
+                <button 
+                    onClick={() => { setShowModal(true); setSelectedCourseId(null); setCourseName(''); setTerm(''); setCrn(''); }}
+                    className="mb-6 bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center"
+                >
+                    <FaPlus className="mr-2" /> Create New Course
+                </button>
                 <div className="bg-white shadow-md rounded my-6">
                     {courses.map((course) => (
                         <div key={course._id} className="border-b border-gray-200 last:border-b-0">
-                            <div className="px-4 py-5 sm:px-6 flex justify-between items-center hover:bg-gray-50 cursor-pointer" onClick={() => handleCourseClick(course._id)}>
-                                <div>
-                                    <h3 className="text-lg leading-6 font-medium text-gray-900">{course.name}</h3>
-                                    <p className="mt-1 max-w-2xl text-sm text-gray-500">Term: {course.term} | CRN: {course.crn}</p>
-                                </div>
-                                <div>
-                                    <button className="text-indigo-600 hover:text-indigo-900 mr-3" onClick={(e) => { e.stopPropagation(); setShowModal(true); setCourseName(course.name); setTerm(course.term); setSelectedCourseId(course._id); setCrn(course.crn); }}>
-                                        Edit
-                                    </button>
-                                    <button className="text-red-600 hover:text-red-900" onClick={(e) => { e.stopPropagation(); setShowDeleteModal(true); setSelectedCourseId(course._id); }}>
-                                        Delete
-                                    </button>
+                            <div className="px-4 py-5 sm:px-6 hover:bg-gray-50 cursor-pointer" onClick={() => handleCourseClick(course._id)}>
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center">
+                                        <FaBook className="text-indigo-600 mr-3" />
+                                        <div>
+                                            <h3 className="text-lg leading-6 font-medium text-gray-900">{course.name}</h3>
+                                            <div className="mt-1 max-w-2xl text-sm text-gray-500 flex">
+                                                <span className="flex items-center mr-4">
+                                                    <FaCalendar className="mr-1" /> {course.term}
+                                                </span>
+                                                <span className="flex items-center">
+                                                    <FaHashtag className="mr-1" /> {course.crn}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <button 
+                                            className="text-indigo-600 hover:text-indigo-900 mr-3"
+                                            onClick={(e) => { 
+                                                e.stopPropagation(); 
+                                                setShowModal(true); 
+                                                setCourseName(course.name); 
+                                                setTerm(course.term); 
+                                                setSelectedCourseId(course._id); 
+                                                setCrn(course.crn); 
+                                            }}
+                                        >
+                                            <FaEdit className="inline mr-1" /> Edit
+                                        </button>
+                                        <button 
+                                            className="text-red-600 hover:text-red-900"
+                                            onClick={(e) => { 
+                                                e.stopPropagation(); 
+                                                setShowDeleteModal(true); 
+                                                setSelectedCourseId(course._id); 
+                                            }}
+                                        >
+                                            <FaTrash className="inline mr-1" /> Delete
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     ))}
                 </div>
-                <button onClick={() => { setShowModal(true); setSelectedCourseId(null); setCourseName(''); setTerm(''); setCrn(''); }} 
-                        className="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Create New Course
-                </button>
             </div>
             <CreateCourseModal
                 show={showModal}

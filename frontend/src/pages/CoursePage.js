@@ -1,21 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Nav, Tab } from 'react-bootstrap';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import '@fortawesome/fontawesome-free/css/all.min.css';
-import StudentSidebar from '../components/StudentSidebar'
-import StudentsTab from '../components/StudentsTab'; 
+import StudentSidebar from '../components/StudentSidebar';
+import { FaBook, FaCalendar, FaHashtag } from 'react-icons/fa';
 
 const MainContent = ({ children, isSidebarOpen }) => (
-    <div style={{
-        marginLeft: isSidebarOpen ? '250px' : '80px',
-        padding: '2rem',
-        width: '100%',
-        transition: 'margin-left 0.3s'
-    }}>
+    <div className={`flex-1 transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-20'}`}>
         {children}
     </div>
 );
@@ -25,6 +17,8 @@ const CoursePage = () => {
     const [course, setCourse] = useState(null);
     const [isSidebarOpen, setSidebarOpen] = useState(true);
     const [user, setUser] = useState(null);
+    const navigate = useNavigate();
+    const [activeTab, setActiveTab] = useState('assignments');
 
     useEffect(() => {
         const fetchCourseDetails = async () => {
@@ -63,6 +57,11 @@ const CoursePage = () => {
         setSidebarOpen(!isSidebarOpen);
     };
 
+    const handleClickDashboard = (event) => {
+        event.preventDefault();
+        navigate('/Dashboard');
+    };
+
     const handleLogout = () => {
         const casLogoutUrl = 'https://login.vt.edu/profile/cas/logout';
         const redirectionUrl = 'https://crescendo.cs.vt.edu/';
@@ -74,49 +73,66 @@ const CoursePage = () => {
     }
 
     return (
-        <div>
+        <div className="flex h-screen bg-gray-100">
             <ToastContainer />
-            <StudentSidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} handleLogout={handleLogout} user={user} />
-            <div style={{ display: 'flex', width: '100%' }}>
-                <MainContent isSidebarOpen={isSidebarOpen}>
-                    <h1>Course Page</h1>
-                    <div style={{ marginBottom: '20px', padding: '10px', border: '1px solid #ccc', borderRadius: '5px' }}>
+            <StudentSidebar 
+                isOpen={isSidebarOpen} 
+                toggleSidebar={toggleSidebar} 
+                handleLogout={handleLogout} 
+                user={user} 
+                handleClickDashboard={handleClickDashboard} 
+            />
+            <MainContent isSidebarOpen={isSidebarOpen}>
+                <div className="p-8">
+                    <h1 className="text-4xl font-bold mb-6 text-maroon-800">Course Details</h1>
+                    <div className="bg-white shadow-lg rounded-lg p-6 mb-8">
                         {course && (
                             <>
-                                <h2>{course.name}</h2>
-                                <p>Term: {course.term}</p>
-                                <p>CRN: {course.crn}</p>
+                                <h2 className="text-3xl font-semibold mb-4 text-gray-800 flex items-center">
+                                    <FaBook className="mr-2 text-maroon-800" /> {course.name}
+                                </h2>
+                                <p className="text-xl mb-2 text-gray-600 flex items-center">
+                                    <FaCalendar className="mr-2 text-maroon-800" /> Term: <span className="font-medium ml-1">{course.term}</span>
+                                </p>
+                                <p className="text-xl mb-2 text-gray-600 flex items-center">
+                                    <FaHashtag className="mr-2 text-maroon-800" /> CRN: <span className="font-medium ml-1">{course.crn}</span>
+                                </p>
                             </>
                         )}
                     </div>
-                    <Tab.Container id="left-tabs-example" defaultActiveKey="assignments">
-                        <Nav variant="tabs">
-                            <Nav.Item>
-                                <Nav.Link eventKey="assignments">Assignments</Nav.Link>
-                            </Nav.Item>
-                            <Nav.Item>
-                                <Nav.Link eventKey="students">Students</Nav.Link>
-                            </Nav.Item>
-                            <Nav.Item>
-                                <Nav.Link eventKey="feedbacks">Feedbacks</Nav.Link>
-                            </Nav.Item>
-                        </Nav>
-                        <Tab.Content>
-                            <Tab.Pane eventKey="assignments">
-                                <h2>Assignments</h2>
-                                {/* Assignments content here */}
-                            </Tab.Pane>
-                            <Tab.Pane eventKey="students">
-                                <StudentsTab />
-                            </Tab.Pane>
-                            <Tab.Pane eventKey="feedbacks">
-                                <h2>Feedbacks</h2>
-                                {/* Feedbacks content here */}
-                            </Tab.Pane>
-                        </Tab.Content>
-                    </Tab.Container>
-                </MainContent>
-            </div>
+                    <div className="bg-white shadow-md rounded-lg overflow-hidden">
+                        <nav className="flex border-b border-gray-200">
+                            {['Assignments', 'Groups', 'Feedbacks'].map((tab) => (
+                                <button
+                                    key={tab.toLowerCase()}
+                                    onClick={() => setActiveTab(tab.toLowerCase())}
+                                    className={`px-6 py-3 text-sm font-medium ${
+                                        activeTab === tab.toLowerCase()
+                                            ? 'border-b-2 border-maroon-800 text-maroon-800'
+                                            : 'text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                    } focus:outline-none transition duration-150 ease-in-out`}
+                                >
+                                    {tab}
+                                </button>
+                            ))}
+                        </nav>
+                        <div className="p-6">
+                            {activeTab === 'assignments' && (
+                                <h2 className="text-2xl font-semibold mb-4">Assignments</h2>
+                                // Assignments content here
+                            )}
+                            {activeTab === 'groups' && (
+                                <h2 className="text-2xl font-semibold mb-4">Groups</h2>
+                                // Groups content here
+                            )}
+                            {activeTab === 'feedbacks' && (
+                                <h2 className="text-2xl font-semibold mb-4">Feedbacks</h2>
+                                // Feedbacks content here
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </MainContent>
         </div>
     );
 };

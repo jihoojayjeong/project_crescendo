@@ -3,29 +3,10 @@ import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate, useLocation } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import '@fortawesome/fontawesome-free/css/all.min.css'; 
 import StudentSidebar from '../components/StudentSidebar';
 import NameModal from '../components/\bNameModal';
-import { Button, Form, Card } from 'react-bootstrap';
 import RegisterCourseModal from '../components/RegisterCourseModal';
-
-const Container = ({ children }) => (
-    <div style={{ display: 'flex' }}>
-        {children}
-    </div>
-);
-
-const MainContent = ({ children, isSidebarOpen }) => (
-    <div style={{
-        marginLeft: isSidebarOpen ? '250px' : '80px',
-        padding: '2rem',
-        width: '100%',
-        transition: 'margin-left 0.3s'
-    }}>
-        {children}
-    </div>
-);
+import { FaBook, FaCalendar, FaHashtag, FaPlus } from 'react-icons/fa';
 
 const Dashboard = () => {
     const [isSidebarOpen, setSidebarOpen] = useState(true);
@@ -34,56 +15,48 @@ const Dashboard = () => {
     const [showRegisterModal, setShowRegisterModal] = useState(false);
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
-    const [showRegisterInput, setShowRegisterInput] = useState(false); 
-    const [courseCode, setCourseCode] = useState(''); 
-    const [courses, setCourses] = useState([]); 
+    const [courseCode, setCourseCode] = useState('');
+    const [courses, setCourses] = useState([]);
     const navigate = useNavigate();
     const location = useLocation();
 
     useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const response = await axios.get(`${process.env.REACT_APP_API_URL}/user/getUser`, {
-                    withCredentials: true,
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                console.log("Response Data :", JSON.stringify(response.data, null, 2))
-                if (response.data.isFirstLogin) {
-                    setShowModal(true);
-                }
-                setUser(response.data);
-            } catch (error) {
-                console.error('Error fetching user data:', error);
-            }
-        };
-
-        const fetchUserCourses = async () => {
-            try {
-                const response = await axios.get(`${process.env.REACT_APP_API_URL}/courses/user/courses`, {
-                    withCredentials: true,
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                setCourses(response.data);
-            } catch (error) {
-                console.error('Error fetching user courses:', error);
-            }
-        };
-
         fetchUserData();
         fetchUserCourses();
     }, []);
+
+    const fetchUserData = async () => {
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/user/getUser`, {
+                withCredentials: true,
+                headers: { 'Content-Type': 'application/json' }
+            });
+            if (response.data.isFirstLogin) {
+                setShowModal(true);
+            }
+            setUser(response.data);
+        } catch (error) {
+            console.error('Error fetching user data:', error);
+        }
+    };
+
+    const fetchUserCourses = async () => {
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/courses/user/courses`, {
+                withCredentials: true,
+                headers: { 'Content-Type': 'application/json' }
+            });
+            setCourses(response.data);
+        } catch (error) {
+            console.error('Error fetching user courses:', error);
+        }
+    };
 
     const handleCourseClick = (courseId) => {
         navigate(`/course/${courseId}`, { state: {from: location.pathname}});
     };
 
-    const toggleSidebar = () => {
-        setSidebarOpen(!isSidebarOpen);
-    };
+    const toggleSidebar = () => setSidebarOpen(!isSidebarOpen);
 
     const handleLogout = () => {
         const casLogoutUrl = 'https://login.vt.edu/profile/cas/logout';
@@ -95,9 +68,7 @@ const Dashboard = () => {
         try {
             await axios.post(`${process.env.REACT_APP_API_URL}/user/saveName`, { firstName, lastName }, {
                 withCredentials: true,
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                headers: { 'Content-Type': 'application/json' }
             });
             setUser(prevState => ({ ...prevState, name: `${firstName} ${lastName}`, isFirstLogin: false }));
             setShowModal(false);
@@ -116,11 +87,10 @@ const Dashboard = () => {
         try {
             const response = await axios.post(`${process.env.REACT_APP_API_URL}/courses/register`, { uniqueCode: courseCode }, {
                 withCredentials: true,
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                headers: { 'Content-Type': 'application/json' }
             });
-            setCourses([...courses, response.data.course]); 
+            setCourses([...courses, response.data.course]);
+            setShowRegisterModal(false);
             toast.success(response.data.message);
         } catch (error) {
             console.error('Error registering course:', error);
@@ -131,27 +101,51 @@ const Dashboard = () => {
             }
         }
     };
-    
 
     return (
-        <div>
-            <ToastContainer />
-            <Container>
-                <StudentSidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} handleLogout={handleLogout} user={user} />
-                <MainContent isSidebarOpen={isSidebarOpen}>
-                    <h1>Dashboard</h1>
-                    <Button variant="primary" onClick={handleRegisterCourse}>Register Course</Button>
-                    {courses.map((course, index) => (
-                        <Card key={index} style={{ marginTop: '20px', cursor: 'pointer' }} onClick={() => handleCourseClick(course._id)}>
-                            <Card.Header>{course.name}</Card.Header>
-                            <Card.Body>
-                                <Card.Title>Term: {course.term}</Card.Title>
-                                <Card.Text>CRN: {course.crn}</Card.Text>
-                            </Card.Body>
-                        </Card>
+        <div className="flex h-screen bg-gray-100">
+            <StudentSidebar 
+                isOpen={isSidebarOpen} 
+                toggleSidebar={toggleSidebar} 
+                handleLogout={handleLogout} 
+                user={user}
+            />
+            <div className={`flex-1 p-10 ${isSidebarOpen ? 'ml-64' : 'ml-20'} transition-all duration-300`}>
+                <h1 className="text-3xl font-semibold text-gray-800 mb-6">Dashboard</h1>
+                <button 
+                    onClick={handleRegisterCourse}
+                    className="mb-6 bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center"
+                >
+                    <FaPlus className="mr-2" /> Register Course
+                </button>
+                <div className="bg-white shadow-md rounded my-6">
+                    {courses.map((course) => (
+                        <div key={course._id} className="border-b border-gray-200 last:border-b-0">
+                            <div className="px-4 py-5 sm:px-6 hover:bg-gray-50 cursor-pointer" onClick={() => handleCourseClick(course._id)}>
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center">
+                                        <FaBook className="text-indigo-600 mr-3" />
+                                        <div>
+                                            <h3 className="text-lg leading-6 font-medium text-gray-900">{course.name}</h3>
+                                            <div className="mt-1 max-w-2xl text-sm text-gray-500 flex">
+                                                <span className="flex items-center mr-4">
+                                                    <FaCalendar className="mr-1" /> {course.term}
+                                                </span>
+                                                <span className="flex items-center">
+                                                    <FaHashtag className="mr-1" /> {course.crn}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button className="text-indigo-600 hover:text-indigo-900">
+                                        View Details
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     ))}
-                </MainContent>
-            </Container>
+                </div>
+            </div>
             <NameModal 
                 show={showModal} 
                 handleClose={() => setShowModal(false)} 
@@ -168,6 +162,7 @@ const Dashboard = () => {
                 setCourseCode={setCourseCode} 
                 handleCourseCodeSubmit={handleCourseCodeSubmit} 
             />
+            <ToastContainer />
         </div>
     );
 };
