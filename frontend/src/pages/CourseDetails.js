@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Nav, Tab } from 'react-bootstrap';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -28,8 +27,8 @@ const CourseDetails = () => {
     const [user, setUser] = useState(null);
     const navigate = useNavigate();
     const [userRole, setUserRole] = useState(null);
+    const [activeTab, setActiveTab] = useState('assignments');
 
-//여기서 설정파일에 포트번호를 지정 안해서 오류가 났던것!
     useEffect(() => {
         const fetchCourseDetails = async () => {
             try {
@@ -67,11 +66,6 @@ const CourseDetails = () => {
         setSidebarOpen(!isSidebarOpen);
     };
 
-    const handleClickManageStudents = (event) => {
-        event.preventDefault();
-        navigate('/ManageStudents');
-    };
-
     const handleClickCourses = (event) => {
         event.preventDefault();
         navigate('/Courses');
@@ -88,62 +82,57 @@ const CourseDetails = () => {
     }
 
     return (
-        <div>
+        <div className="font-sans bg-gray-100">
             <ToastContainer />
-            <div style={{ display: 'flex', width: '100%' }}>
+            <div className="flex w-full">
                 <FacultySidebar 
                     isOpen={isSidebarOpen} 
                     toggleSidebar={toggleSidebar} 
                     handleLogout={handleLogout} 
                     user={user} 
-                    handleClickManageStudents={handleClickManageStudents} 
                     handleClickCourses={handleClickCourses} 
                 />
                 <MainContent isSidebarOpen={isSidebarOpen}>
-                    <h1>Course Details</h1>
-                    <div style={{ marginBottom: '20px', padding: '10px', border: '1px solid #ccc', borderRadius: '5px' }}>
+                    <h1 className="text-5xl font-bold mb-6 text-maroon-800">Course Details</h1>
+                    <div className="bg-white shadow-lg rounded-lg p-6 mb-8">
                         {course && (
                             <>
-                                <h2>{course.name}</h2>
-                                <p>Term: {course.term}</p>
-                                <p>CRN: {course.crn}</p>
-                                <p>Course Code: {course.uniqueCode}</p> 
+                                <h2 className="text-4xl font-semibold mb-4 text-gray-800">{course.name}</h2>
+                                <p className="text-xl mb-2 text-gray-600">Term: <span className="font-medium">{course.term}</span></p>
+                                <p className="text-xl mb-2 text-gray-600">CRN: <span className="font-medium">{course.crn}</span></p>
+                                <p className="text-xl mb-2 text-gray-600">Course Code: <span className="font-medium">{course.uniqueCode}</span></p> 
                             </>
                         )}
                     </div>
-                    <Tab.Container id="left-tabs-example" defaultActiveKey="assignments">
-                        <Nav variant="tabs">
-                            <Nav.Item>
-                                <Nav.Link eventKey="assignments">Assignments</Nav.Link>
-                            </Nav.Item>
-                            <Nav.Item>
-                                <Nav.Link eventKey="students">Students</Nav.Link>
-                            </Nav.Item>
-                            <Nav.Item>
-                                <Nav.Link eventKey="groups">Groups</Nav.Link>
-                            </Nav.Item>
-                            <Nav.Item>
-                                <Nav.Link eventKey="feedbacks">Feedbacks</Nav.Link>
-                            </Nav.Item>
-                        </Nav>
-                        <Tab.Content>
-                            <Tab.Pane eventKey="assignment">
-                                <h2>Assignmentss</h2>
-                                {/* Assignments content here */}
-                            </Tab.Pane>
-                            <Tab.Pane eventKey="students">
-                                <StudentsTab />
-                            </Tab.Pane>
-                            <Tab.Pane eventKey="groups">
-                                <FacultyGroupTab />
-                            </Tab.Pane>
-                            
-                            <Tab.Pane eventKey="feedbacks">
-                                <h2>Feedbacks</h2>
-                                {/* Feedbacks content here */}
-                            </Tab.Pane>
-                        </Tab.Content>
-                    </Tab.Container>
+                    <div className="bg-white shadow-md rounded-lg overflow-hidden">
+                        <nav className="flex border-b border-gray-200">
+                            {['Assignments', 'Students', 'Groups', 'Feedbacks'].map((tab) => (
+                                <button
+                                    key={tab.toLowerCase()}
+                                    onClick={() => setActiveTab(tab.toLowerCase())}
+                                    className={`px-4 py-3 text-sm font-medium ${
+                                        activeTab === tab.toLowerCase()
+                                            ? 'border-b-2 border-maroon-800 text-maroon-800'
+                                            : 'text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                    } focus:outline-none transition duration-150 ease-in-out`}
+                                >
+                                    {tab}
+                                </button>
+                            ))}
+                        </nav>
+                        <div className="p-4">
+                            {activeTab === 'assignments' && (
+                                <h2 className="text-2xl font-semibold mb-4">Assignments</h2>
+                                // Assignments content here
+                            )}
+                            {activeTab === 'students' && <StudentsTab />}
+                            {activeTab === 'groups' && <FacultyGroupTab />}
+                            {activeTab === 'feedbacks' && (
+                                <h2 className="text-2xl font-semibold mb-4">Feedbacks</h2>
+                                // Feedbacks content here
+                            )}
+                        </div>
+                    </div>
                 </MainContent>
             </div>
         </div>

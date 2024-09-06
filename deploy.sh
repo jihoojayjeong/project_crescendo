@@ -1,3 +1,5 @@
+set -e #stop script on error
+
 # server info
 SERVER_USER="sangwonlee"
 SERVER_HOST="crescendo.cs.vt.edu"
@@ -8,8 +10,10 @@ echo "Stopping existing Node.js server..."
 ssh $SERVER_USER@$SERVER_HOST "pm2 stop all"
 
 # build frontend
-echo "Building frontend..."
+echo "Installing frontend dependencies..."
 cd frontend
+npm install
+echo "Building frontend..."
 npm run build
 cd ..
 
@@ -30,7 +34,7 @@ echo "Deploying on server..."
 ssh $SERVER_USER@$SERVER_HOST "cd $DEPLOY_DIR/backend && npm install && NODE_ENV=production pm2 start ecosystem.config.js --update-env"
 
 # restart nginx to apply new configuration
-echo "Restarting Nginx..."
-ssh $SERVER_USER@$SERVER_HOST "sudo systemctl restart nginx"
+# echo "Restarting Nginx..."
+# ssh $SERVER_USER@$SERVER_HOST "sudo systemctl restart nginx"
 
 echo "Deployment complete!"

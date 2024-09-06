@@ -2,36 +2,12 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Button, Card, Modal, Row, Col } from 'react-bootstrap';
+import { Button, Modal } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import '../styles/courseDetails.css';
-import '../styles/courses.css';
-// import '/home/sangwonlee/project_cresendo/frontend/src/styles/courseDetails.css';
-import '../styles/courseDetails.css'
 import FacultySidebar from '../components/FacultySidebar';
-// import '/home/sangwonlee/project_cresendo/frontend/src/styles/courses.css';
-import '../styles/courses.css'
-import NameModal from '../components/NameModal';
 import CreateCourseModal from '../components/CreateCourseModal';
-
-const Container = ({ children }) => (
-    <div style={{ display: 'flex', width: '100%' }}>
-        {children}
-    </div>
-);
-
-const MainContent = ({ children, isSidebarOpen }) => (
-    <div style={{
-        marginLeft: isSidebarOpen ? '250px' : '80px',
-        padding: '2rem',
-        width: '100%',
-        transition: 'margin-left 0.3s'
-    }}>
-        {children}
-    </div>
-);
 
 const Courses = () => {
     const [isSidebarOpen, setSidebarOpen] = useState(true);
@@ -43,111 +19,40 @@ const Courses = () => {
     const [term, setTerm] = useState('');
     const [crn, setCrn] = useState('');
     const [selectedCourseId, setSelectedCourseId] = useState(null);
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [showNameModal, setShowNameModal] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
 
     useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const response = await axios.get(`${process.env.REACT_APP_API_URL}/user/getUser`, {
-                    withCredentials: true,
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                console.log("Response Data :", JSON.stringify(response.data, null, 2));
-                if (response.data.isFirstLogin) {
-                    setShowNameModal(true);
-                }
-                setUser(response.data);
-            } catch (error) {
-                console.error('Error fetching user data:', error);
-            }
-        };
-
-        const fetchCourses = async () => {
-            try {
-                const response = await axios.get(`${process.env.REACT_APP_API_URL}/courses/`, {
-                    withCredentials: true,
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                console.log("Fetched Courses: ", response.data);
-                setCourses(response.data);
-            } catch (error) {
-                console.error('Error fetching courses:', error);
-            }
-        };
-
-        fetchUserData();
         fetchCourses();
+        fetchUserData();
     }, []);
 
-    const toggleSidebar = () => {
-        setSidebarOpen(!isSidebarOpen);
-    };
-
-    const handleCourseClick = (courseId) => {
-        navigate(`/course/${courseId}`, { state: { from: location.pathname } });
-    };
-
-    const handleClickManageStudents = (event) => {
-        event.preventDefault();
-        navigate('/ManageStudents');
-    }
-
-    const handleDeleteCourse = async () => {
+    const fetchCourses = async () => {
         try {
-            const response = await axios.delete(`${process.env.REACT_APP_API_URL}/courses/${selectedCourseId}`, {
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/courses/`, {
                 withCredentials: true,
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                headers: { 'Content-Type': 'application/json' }
             });
-
-            if (response.status === 200) {
-                toast.success('Course deleted successfully!');
-                setCourses(courses.filter(course => course._id !== selectedCourseId));
-                setShowDeleteModal(false);
-                setSelectedCourseId(null);
-            }
+            setCourses(response.data);
         } catch (error) {
-            toast.error('Failed to delete course');
-            console.error('Error deleting course:', error);
+            console.error('Error fetching courses:', error);
+            toast.error('Failed to fetch courses');
         }
     };
 
-    const handleUpdateCourse = async () => {
+    const fetchUserData = async () => {
         try {
-            const response = await axios.put(`${process.env.REACT_APP_API_URL}/courses/${selectedCourseId}`, {
-                name: courseName,
-                term: term,
-                crn: crn
-            }, {
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/user/getUser`, {
                 withCredentials: true,
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                headers: { 'Content-Type': 'application/json' }
             });
-
-            if (response.status === 200) {
-                toast.success('Course updated successfully!');
-                setCourses(courses.map(course => course._id === selectedCourseId ? response.data : course));
-                setShowModal(false);
-                setCourseName('');
-                setTerm('');
-                setCrn('');
-                setSelectedCourseId(null);
-            }
+            setUser(response.data);
         } catch (error) {
-            toast.error('Failed to update course');
-            console.error('Error updating course:', error);
+            console.error('Error fetching user data:', error);
         }
     };
+
+    const toggleSidebar = () => setSidebarOpen(!isSidebarOpen);
 
     const handleLogout = () => {
         const casLogoutUrl = 'https://login.vt.edu/profile/cas/logout';
@@ -155,133 +60,120 @@ const Courses = () => {
         window.location.href = `${casLogoutUrl}?service=${encodeURIComponent(redirectionUrl)}`;
     };
 
+    const handleCourseClick = (courseId) => {
+        navigate(`/course/${courseId}`, { state: { from: location.pathname } });
+    };
+
     const handleCreateCourse = async () => {
         try {
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}/courses/create`, {
-                name: courseName,
-                term: term,
-                crn: crn
-            }, {
+            await axios.post(`${process.env.REACT_APP_API_URL}/courses/create`, { name: courseName, term, crn }, {
                 withCredentials: true,
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                headers: { 'Content-Type': 'application/json' }
             });
-
-            if (response.status === 201) {
-                toast.success('Course created successfully!');
-                setCourses([...courses, response.data]);
-                setShowModal(false);
-                setCourseName('');
-                setTerm('');
-                setCrn('');
-                setSelectedCourseId(null);
-            }
+            setShowModal(false);
+            fetchCourses();
+            toast.success('Course created successfully');
         } catch (error) {
-            toast.error('Failed to create course');
             console.error('Error creating course:', error);
+            toast.error('Failed to create course');
         }
     };
 
-    const handleSaveName = async () => {
+    const handleUpdateCourse = async () => {
         try {
-            await axios.post(`${process.env.REACT_APP_API_URL}/user/saveName`, { firstName, lastName }, {
+            await axios.put(`${process.env.REACT_APP_API_URL}/courses/${selectedCourseId}`, { name: courseName, term, crn }, {
                 withCredentials: true,
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                headers: { 'Content-Type': 'application/json' }
             });
-            setUser(prevState => ({ ...prevState, name: `${firstName} ${lastName}`, isFirstLogin: false }));
-            setShowNameModal(false);
-            toast.success('Name saved successfully');
+            setShowModal(false);
+            fetchCourses();
+            toast.success('Course updated successfully');
         } catch (error) {
-            console.error('Error saving name:', error);
-            toast.error('Failed to save name');
+            console.error('Error updating course:', error);
+            toast.error('Failed to update course');
+        }
+    };
+
+    const handleDeleteCourse = async () => {
+        try {
+            await axios.delete(`${process.env.REACT_APP_API_URL}/courses/${selectedCourseId}`, {
+                withCredentials: true,
+                headers: { 'Content-Type': 'application/json' }
+            });
+            setShowDeleteModal(false);
+            fetchCourses();
+            toast.success('Course deleted successfully');
+        } catch (error) {
+            console.error('Error deleting course:', error);
+            toast.error('Failed to delete course');
         }
     };
 
     return (
-        <div>
-            <ToastContainer />
-            <Container>
-                <FacultySidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} handleLogout={handleLogout} user={user} handleClickManageStudents={handleClickManageStudents} />
-                <MainContent isSidebarOpen={isSidebarOpen}>
-                    <h1>Courses</h1>
-                    <div style={{ textAlign: 'center', marginTop: '50px' }}>
-                        <Row>
-                            <Col>
-                                <div className="d-flex flex-column align-items-center">
-                                    {courses.map((course) => (
-                                        <Card key={course._id} className="my-3 course-card" style={{ width: '80%' }} onClick={() => handleCourseClick(course._id)}>
-                                            <Card.Body className="d-flex justify-content-between align-items-center">
-                                                <div>
-                                                    <Card.Title>
-                                                        {course.name}
-                                                        <span style={{ fontSize: '0.8em', color: 'gray', marginLeft: '10px' }}>CRN: {course.crn}</span>
-                                                    </Card.Title>
-                                                    <Card.Text>{course.term}</Card.Text>
-                                                </div>
-                                                <div className="d-flex">
-                                                    <Button variant="secondary" style={{ marginRight: '10px' }} onClick={(e) => { e.stopPropagation(); setShowModal(true); setCourseName(course.name); setTerm(course.term); setSelectedCourseId(course._id); setCrn(course.crn); }}>
-                                                        <i className="fas fa-edit"></i>
-                                                    </Button>
-                                                    <Button variant="danger" onClick={(e) => { e.stopPropagation(); setShowDeleteModal(true); setSelectedCourseId(course._id); }}>
-                                                        <i className="fas fa-trash-alt"></i>
-                                                    </Button>
-                                                </div>
-                                            </Card.Body>
-                                        </Card>
-                                    ))}
+        <div className="flex h-screen bg-gray-100">
+            <FacultySidebar 
+                isOpen={isSidebarOpen} 
+                toggleSidebar={toggleSidebar} 
+                handleLogout={handleLogout} 
+                user={user} 
+                handleClickCourses={() => {}}
+            />
+            <div className={`flex-1 p-10 ${isSidebarOpen ? 'ml-64' : 'ml-20'} transition-all duration-300`}>
+                <h1 className="text-3xl font-semibold text-gray-800 mb-6">Courses</h1>
+                <div className="bg-white shadow-md rounded my-6">
+                    {courses.map((course) => (
+                        <div key={course._id} className="border-b border-gray-200 last:border-b-0">
+                            <div className="px-4 py-5 sm:px-6 flex justify-between items-center hover:bg-gray-50 cursor-pointer" onClick={() => handleCourseClick(course._id)}>
+                                <div>
+                                    <h3 className="text-lg leading-6 font-medium text-gray-900">{course.name}</h3>
+                                    <p className="mt-1 max-w-2xl text-sm text-gray-500">Term: {course.term} | CRN: {course.crn}</p>
                                 </div>
-                            </Col>
-                            <Col>
-                                <Button variant="primary" onClick={() => {
-                                    setShowModal(true); setSelectedCourseId(null); setCourseName(''); setTerm(''); setCrn('');
-                                }}
-                                    className='create-course-button'>
-                                    Create New Course</Button>
-                            </Col>
-                        </Row>
-                        <CreateCourseModal
-                            show={showModal}
-                            handleClose={() => setShowModal(false)}
-                            courseName={courseName}
-                            setCourseName={setCourseName}
-                            term={term}
-                            setTerm={setTerm}
-                            crn={crn}
-                            setCrn={setCrn}
-                            handleSave={selectedCourseId ? handleUpdateCourse : handleCreateCourse}
-                            isUpdate={Boolean(selectedCourseId)}
-                        />
-                        <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
-                            <Modal.Header closeButton>
-                                <Modal.Title>Confirm Delete</Modal.Title>
-                            </Modal.Header>
-                            <Modal.Body>
-                                Are you sure you want to delete this course?
-                            </Modal.Body>
-                            <Modal.Footer>
-                                <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
-                                    Cancel
-                                </Button>
-                                <Button variant="danger" onClick={handleDeleteCourse}>
-                                    Delete
-                                </Button>
-                            </Modal.Footer>
-                        </Modal>
-                        <NameModal
-                            show={showNameModal}
-                            handleClose={() => setShowNameModal(false)}
-                            firstName={firstName}
-                            setFirstName={setFirstName}
-                            lastName={lastName}
-                            setLastName={setLastName}
-                            handleSaveName={handleSaveName}
-                        />
-                    </div>
-                </MainContent>
-            </Container>
+                                <div>
+                                    <button className="text-indigo-600 hover:text-indigo-900 mr-3" onClick={(e) => { e.stopPropagation(); setShowModal(true); setCourseName(course.name); setTerm(course.term); setSelectedCourseId(course._id); setCrn(course.crn); }}>
+                                        Edit
+                                    </button>
+                                    <button className="text-red-600 hover:text-red-900" onClick={(e) => { e.stopPropagation(); setShowDeleteModal(true); setSelectedCourseId(course._id); }}>
+                                        Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+                <button onClick={() => { setShowModal(true); setSelectedCourseId(null); setCourseName(''); setTerm(''); setCrn(''); }} 
+                        className="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Create New Course
+                </button>
+            </div>
+            <CreateCourseModal
+                show={showModal}
+                handleClose={() => setShowModal(false)}
+                courseName={courseName}
+                setCourseName={setCourseName}
+                term={term}
+                setTerm={setTerm}
+                crn={crn}
+                setCrn={setCrn}
+                handleSave={selectedCourseId ? handleUpdateCourse : handleCreateCourse}
+                isUpdate={Boolean(selectedCourseId)}
+            />
+            <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Confirm Delete</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    Are you sure you want to delete this course?
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+                        Cancel
+                    </Button>
+                    <Button variant="danger" onClick={handleDeleteCourse}>
+                        Delete
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+            <ToastContainer />
         </div>
     );
 };

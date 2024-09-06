@@ -43,43 +43,51 @@ const LoginPage = () => {
         }
     };
 
-    const headerBar = (
-        <Navbar style={{backgroundColor: '#880000', fontFamily: 'Lato', padding: '10px', borderRadius: '10px', fontWeight: '700', color: 'inherit' }}>
-            <Navbar.Brand href="#home" style={{ color: '#fff', fontSize: '24px' }}>
-                Virginia Tech CS Capstone Feedback Page
-            </Navbar.Brand>
-        </Navbar>
-    );
-
-    const loginForm = (
-        <div style={{ backgroundColor: '#ffffff', padding: '20px', borderRadius: '10px', boxShadow: '0px 0px 10px 0px rgba(0,0,0,0.1)', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            {isLocalEnv && (
-                <Form.Group controlId="roleSelect" style={{ marginBottom: '10px' }}>
-                    <Form.Label>Select Role</Form.Label>
-                    <Form.Control as="select" value={role} onChange={(e) => setRole(e.target.value)}>
-                        <option value="student">Student</option>
-                        <option value="faculty">Faculty</option>
-                    </Form.Control>
-                </Form.Group>
-            )}
-            <Button onClick={handleLogin} style={{ backgroundColor: 'maroon', borderColor: 'maroon', padding: '10px 20px', fontSize: '16px' }} type="submit">CAS Login</Button>
-            <Form.Group controlId="formBasicCheckbox" style={{ marginTop: '10px' }}>
-                <Form.Check type="checkbox" label="Keep me signed in" />
-            </Form.Group>
-        </div>
-    );
-
     return (
-        <Container fluid className="vh-100">
+        <div className="min-h-screen bg-gray-100 flex flex-col">
             <ToastContainer />
-            {headerBar}
-            <Row className="justify-content-center align-items-center h-100">
-                <Col xs={12} md={6} lg={4}>
-                    <h1 style={{ fontFamily: 'Lato' }}>Login</h1>
-                    {loginForm}
-                </Col>
-            </Row>
-        </Container>
+            <div className="bg-[#861F41] text-white py-4 px-6 shadow-md">
+                <h1 className="text-2xl font-bold">Virginia Tech CS Crescendo</h1>
+            </div>
+            <div className="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+                <div className="max-w-md w-full space-y-8">
+                    <div>
+                        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                            Welcome
+                        </h2>
+                        <p className="mt-2 text-center text-sm text-gray-600">
+                            Please log in to access the system
+                        </p>
+                    </div>
+                    <div className="mt-8 bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+                        {isLocalEnv && (
+                            <div className="mb-4">
+                                <label htmlFor="role" className="block text-sm font-medium text-gray-700">
+                                    Select Role
+                                </label>
+                                <select
+                                    id="role"
+                                    value={role}
+                                    onChange={(e) => setRole(e.target.value)}
+                                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-[#861F41] focus:border-[#861F41] sm:text-sm rounded-md"
+                                >
+                                    <option value="student">Student</option>
+                                    <option value="faculty">Faculty</option>
+                                </select>
+                            </div>
+                        )}
+                        <div>
+                            <button
+                                onClick={handleLogin}
+                                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#861F41] hover:bg-[#630F2F] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#861F41]"
+                            >
+                                CAS Login
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     );
 };
 
