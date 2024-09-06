@@ -67,12 +67,33 @@ exports.getRegisteredCourses = async (req, res) => {
 
 exports.getCourse = async (req, res) => {
   const courseId = req.params.courseId;
+  const userId = req.session.user.pid;
+
   try {
-    const course = await Course.findById(courseId); 
+    const course = await Course.findById(courseId).populate('groups.members', 'name email pid');
     if (!course) {
       return res.status(404).json({ error: 'Course not found' });
     }
-    res.json(course);
+
+    const user = await User.findOne({ pid: userId });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const courseData = course.toObject();
+
+    // Find the group that the user belongs to in this course
+    const userGroupInCourse = courseData.groups.find(group => 
+      group.members.some(member => member.pid === userId)
+    );
+
+    courseData.userGroupInCourse = userGroupInCourse ? userGroupInCourse.groupNumber.toString() : 'Not assigned';
+    courseData.userGroupFromUserModel = user.group || 'Not assigned';
+
+    console.log('User group from User model:', courseData.userGroupFromUserModel);
+    console.log('User group from Course data:', courseData.userGroupInCourse);
+
+    res.json(courseData);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Server error' });
@@ -224,32 +245,16 @@ exports.saveGroups = async (req, res) => {
       return res.status(404).json({ message: 'Course not found' });
     }
 
-    const existingGroups = course.groups.map(group => ({
-      groupNumber: group.groupNumber,
-      members: group.members.map(member => member._id)
-    }));
-
     const newGroups = groups.map(group => ({
       groupNumber: group.groupNumber,
-      members: group.members.map(member => new mongoose.Types.ObjectId(member._id || member))
+      members: group.members.map(member => new mongoose.Types.ObjectId(member._id))
     }));
 
-    const mergedGroups = [...existingGroups, ...newGroups].reduce((acc, group) => {
-      const existingGroup = acc.find(g => g.groupNumber === group.groupNumber);
-      if (existingGroup) {
-        existingGroup.members = group.members;
-      } else {
-        acc.push(group);
-      }
-      return acc;
-    }, []);
-
-    course.groups = mergedGroups;
-
+    course.groups = newGroups;
     await course.save();
 
     // Populate the members data before sending the response
-    await course.populate('groups.members', 'name email');
+    await course.populate('groups.members', 'name email pid');
 
     res.status(200).json({ groups: course.groups });
   } catch (error) {

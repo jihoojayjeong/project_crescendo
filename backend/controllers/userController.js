@@ -31,7 +31,8 @@ exports.getUser = (req, res) => {
     email: req.session.user.email,
     role: req.session.user.role,
     name: req.session.user.name,
-    isFirstLogin: req.session.user.isFirstLogin
+    isFirstLogin: req.session.user.isFirstLogin,
+    group: req.session.user.group
   });
 };
 

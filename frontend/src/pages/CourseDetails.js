@@ -22,7 +22,7 @@ const CourseDetails = () => {
     const [isSidebarOpen, setSidebarOpen] = useState(true);
     const [user, setUser] = useState(null);
     const navigate = useNavigate();
-    const [userRole, setUserRole] = useState(null);
+    //const [userRole, setUserRole] = useState(null);
     const [activeTab, setActiveTab] = useState('assignments');
 
     useEffect(() => {

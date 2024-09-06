@@ -6,7 +6,7 @@ import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
 import CreateGroupModal from './CreateGroupModal';
 import EditGroupModal from './EditGroupModal';
 
-const FacultyGroupTab = () => {
+const FacultyGroupTab = ({ onGroupSave }) => {
   const { courseId } = useParams();
   const [students, setStudents] = useState([]);
   const [selectedStudents, setSelectedStudents] = useState([]);
@@ -124,7 +124,7 @@ const FacultyGroupTab = () => {
     setEditingGroup(group);  
     setSelectedStudents(group.members);  
     setSelectedGroup(group);
-    setTempGroups(groups.map(g => g._id === group._id ? group : g)); // 현재 그룹 상태를 tempGroups에 복사
+    setTempGroups(groups.map(g => g._id === group._id ? group : g));
     setShowEditModal(true); 
   };
 
@@ -153,8 +153,21 @@ const FacultyGroupTab = () => {
 
   const handleSaveGroup = async () => {
     try {
+      // Combine existing groups with temp groups
+      const updatedGroups = [...groups, ...tempGroups].reduce((acc, group) => {
+        const existingGroupIndex = acc.findIndex(g => g.groupNumber === group.groupNumber);
+        if (existingGroupIndex !== -1) {
+          // Update existing group
+          acc[existingGroupIndex] = group;
+        } else {
+          // Add new group
+          acc.push(group);
+        }
+        return acc;
+      }, []);
+
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/courses/${courseId}/saveGroups`, {
-        groups: tempGroups
+        groups: updatedGroups
       }, {
         withCredentials: true,
         headers: {
@@ -165,6 +178,7 @@ const FacultyGroupTab = () => {
       if (response.status === 200) {
         setGroups(response.data.groups);
         setSelectedStudents([]);
+        setTempGroups([]);
         setShowCreateModal(false);
         setShowEditModal(false);
         alert('Group saved successfully!');

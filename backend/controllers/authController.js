@@ -103,7 +103,6 @@ exports.fakeLogin = async (req, res) => {
       name: 'John Doe',
       email: 'johndoe@local.dev',
       isFirstLogin: false,
-      //group: 'Group A'
     };
 
     req.session.user = fakeUser;

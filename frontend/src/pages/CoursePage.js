@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import StudentSidebar from '../components/StudentSidebar';
-import { FaBook, FaCalendar, FaHashtag } from 'react-icons/fa';
+import { FaBook, FaCalendar, FaHashtag, FaUsers } from 'react-icons/fa';
 
 const MainContent = ({ children, isSidebarOpen }) => (
     <div className={`flex-1 transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-20'}`}>
@@ -30,6 +30,7 @@ const CoursePage = () => {
                     }
                 });
                 setCourse(response.data);
+                console.log('Course data:', response.data);
             } catch (error) {
                 console.error('Error fetching course details:', error);
             }
@@ -44,6 +45,7 @@ const CoursePage = () => {
                     }
                 });
                 setUser(response.data);
+                console.log('User data:', response.data);
             } catch (error) {
                 console.error('Error fetching user data:', error);
             }
@@ -52,6 +54,12 @@ const CoursePage = () => {
         fetchCourseDetails();
         fetchUserData();
     }, [courseId]);
+
+    useEffect(() => {
+        if (user && course) {
+            console.log('User group in this course:', course.userGroup);
+        }
+    }, [user, course]);
 
     const toggleSidebar = () => {
         setSidebarOpen(!isSidebarOpen);
@@ -96,6 +104,11 @@ const CoursePage = () => {
                                 </p>
                                 <p className="text-xl mb-2 text-gray-600 flex items-center">
                                     <FaHashtag className="mr-2 text-maroon-800" /> CRN: <span className="font-medium ml-1">{course.crn}</span>
+                                </p>
+                                <p className="text-xl mb-2 text-gray-600 flex items-center">
+                                    <FaUsers className="mr-2 text-maroon-800" /> Group: <span className="font-medium ml-1">
+                                        {course.userGroup}
+                                    </span>
                                 </p>
                             </>
                         )}
