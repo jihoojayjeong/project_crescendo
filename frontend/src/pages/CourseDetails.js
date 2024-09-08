@@ -7,9 +7,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import FacultySidebar from '../components/FacultySidebar';
 import StudentsTab from '../components/StudentsTab'; 
-import FacultyGroupTab from '../components/FacultyGroupTab'
+import FacultyGroupTab from '../components/FacultyGroupTab';
+import FacultyAssignmentTab from '../components/FacultyAssignmentTab';
 import { FaBook, FaCalendar, FaHashtag, FaKey } from 'react-icons/fa';
 import { handleLogout } from '../utils/casUtils';
+
 const MainContent = ({ children, isSidebarOpen }) => (
     <div className={`flex-1 transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-20'}`}>
         {children}
@@ -22,7 +24,6 @@ const CourseDetails = () => {
     const [isSidebarOpen, setSidebarOpen] = useState(true);
     const [user, setUser] = useState(null);
     const navigate = useNavigate();
-    //const [userRole, setUserRole] = useState(null);
     const [activeTab, setActiveTab] = useState('assignments');
 
     useEffect(() => {
@@ -120,8 +121,7 @@ const CourseDetails = () => {
                         </nav>
                         <div className="p-6">
                             {activeTab === 'assignments' && (
-                                <h2 className="text-2xl font-semibold mb-4">Assignments</h2>
-                                // Assignments content here
+                                <FacultyAssignmentTab course={course} setCourse={setCourse} />
                             )}
                             {activeTab === 'students' && <StudentsTab />}
                             {activeTab === 'groups' && <FacultyGroupTab />}

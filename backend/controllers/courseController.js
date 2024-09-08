@@ -1,6 +1,6 @@
 const Course = require('../models/course');
 const User = require('../models/user'); 
-const { v4: uuidv4 } = require('uuid'); 
+const { v4: uuidv4 } = require('uuid');
 const mongoose = require('mongoose');
 
 exports.createCourse = async (req, res) => {
@@ -301,4 +301,81 @@ exports.addStudentToCourse = async (req, res) => {
     res.status(500).json({ message: 'Failed to add student to course' });
   }
 };
+
+exports.createAssignment = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const { name, description, dueDate } = req.body;
+
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ message: 'Course not found' });
+    }
+
+    const newAssignment = {
+      name,
+      description,
+      dueDate: new Date(dueDate)
+    };
+
+    course.assignments.push(newAssignment);
+    await course.save();
+
+    res.status(201).json(newAssignment);
+  } catch (error) {
+    console.error('Error creating assignment:', error);
+    res.status(500).json({ message: 'Failed to create assignment' });
+  }
+};
+
+exports.updateAssignment = async (req, res) => {
+  try {
+    const { courseId, assignmentId } = req.params;
+    const { name, description, dueDate } = req.body;
+
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ message: 'Course not found' });
+    }
+
+    const assignment = course.assignments.id(assignmentId);
+    if (!assignment) {
+      return res.status(404).json({ message: 'Assignment not found' });
+    }
+
+    assignment.name = name;
+    assignment.description = description;
+    assignment.dueDate = new Date(dueDate);
+
+    await course.save();
+
+    res.status(200).json(assignment);
+  } catch (error) {
+    console.error('Error updating assignment:', error);
+    res.status(500).json({ message: 'Failed to update assignment' });
+  }
+};
+
+exports.deleteAssignment = async (req, res) => {
+  try {
+    const { courseId, assignmentId } = req.params;
+
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ message: 'Course not found' });
+    }
+
+    course.assignments = course.assignments.filter(
+      (assignment) => assignment._id.toString() !== assignmentId
+    );
+
+    await course.save();
+
+    res.status(200).json({ message: 'Assignment deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting assignment:', error);
+    res.status(500).json({ message: 'Failed to delete assignment' });
+  }
+};
+
 

@@ -28,6 +28,24 @@ const courseSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User'
     }]
+  }],
+  assignments: [{
+    name: {
+      type: String,
+      required: true
+    },
+    description: {
+      type: String,
+      required: true
+    },
+    dueDate: {
+      type: Date,
+      required: true
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now
+    }
   }]
 }, {
   timestamps: true

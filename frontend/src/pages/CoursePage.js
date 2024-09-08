@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import StudentSidebar from '../components/StudentSidebar';
+import StudentsAssignmentTab from '../components/StudentsAssignmentTab';
 import TeamsTab from '../components/TeamsTab';
 import { FaBook, FaCalendar, FaHashtag, FaUsers } from 'react-icons/fa';
 import { handleLogout } from '../utils/casUtils';
@@ -130,8 +131,7 @@ const CoursePage = () => {
                                 <TeamsTab course={course} userGroup={course.userGroup} />
                             )}
                             {activeTab === 'assignments' && (
-                                <h2 className="text-2xl font-semibold mb-4">Assignments</h2>
-                                // Assignments content here
+                                <StudentsAssignmentTab course={course} />
                             )}
                             {activeTab === 'feedbacks' && (
                                 <h2 className="text-2xl font-semibold mb-4">Feedbacks</h2>
