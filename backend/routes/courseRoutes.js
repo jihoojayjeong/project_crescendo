@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const authMiddleware = require('../middleware/auth');
 const courseController = require('../controllers/courseController');
 
 router.post('/create', courseController.createCourse);
@@ -19,5 +20,7 @@ router.post('/:courseId/addStudent', courseController.addStudentToCourse);
 router.post('/:courseId/assignments', courseController.createAssignment);
 router.put('/:courseId/assignments/:assignmentId', courseController.updateAssignment);
 router.delete('/:courseId/assignments/:assignmentId', courseController.deleteAssignment);
+router.get('/', authMiddleware, courseController.getCourses);
+router.get('/:courseId', authMiddleware, courseController.getCourse);
 
 module.exports = router;

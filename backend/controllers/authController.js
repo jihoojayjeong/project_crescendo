@@ -62,12 +62,25 @@ exports.checkSession = (req, res) => {
   console.log('checkSession called');
   if (!req.session.user) {
     console.log('No user in session');
-    return res.status(401).send('User not authenticated');
+    return res.status(200).json({ isAuthenticated: false });
   }
 
   console.log('User in session:', req.session.user);
   res.status(200).json({
+    isAuthenticated: true,
     user: req.session.user
+  });
+};
+
+
+exports.handleLogout = (req, res) => {
+  console.log('handleLogout called');
+  req.session.destroy((err) => {
+    if (err) {
+      return res.status(500).json({ message: 'Logout failed' });
+    }
+    res.clearCookie('connect.sid');
+    res.status(200).json({ message: 'Logged out successfully' });
   });
 };
 
@@ -76,10 +89,10 @@ const redirectUserBasedOnRole = (req, res, role) => {
   console.log("Redirecting to:", redirectBaseUrl);
   if (role === 'student') {
     console.log("Redirecting to student page....");
-    return res.redirect(`${redirectBaseUrl}/Courses`);
+    return res.redirect(`${redirectBaseUrl}/Dashboard`);
   } else if (role === 'faculty') {
     console.log("Redirecting to faculty page....");
-    return res.redirect(`${redirectBaseUrl}/Dashboard`);
+    return res.redirect(`${redirectBaseUrl}/Courses`);
   } else {
     return res.status(403).send('Access denied');
   }

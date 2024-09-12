@@ -28,7 +28,7 @@
   "scripts": {
     "start": "react-app-rewired start",
     "build": "CI=false react-app-rewired build",
-    "test": "react-app-rewired test",
+    "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -52,9 +52,21 @@
   "proxy": "http://localhost:8080",
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.16.7",
+    "@babel/preset-env": "^7.25.4",
+    "@babel/preset-react": "^7.24.7",
     "autoprefixer": "^10.4.20",
+    "babel-jest": "^29.7.0",
+    "identity-obj-proxy": "^3.0.0",
     "postcss": "^8.4.45",
     "react-app-rewired": "^2.2.1",
     "tailwindcss": "^3.4.10"
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "\\.(css|less|scss|sass)$": "identity-obj-proxy"
+    },
+    "transformIgnorePatterns": [
+      "/node_modules/(?!(axios)/)"
+    ]
   }
 }

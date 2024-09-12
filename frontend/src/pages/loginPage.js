@@ -8,21 +8,6 @@ const LoginPage = () => {
     const [isLocalEnv] = useState(process.env.NODE_ENV === 'development');
     const [role, setRole] = useState('student');
 
-    useEffect(() => {
-        if (!isLocalEnv) {
-            axios.get('/auth/checkSession')
-                .then(response => {
-                    const user = response.data.user;
-                    if (user) {
-                        window.location.href = user.role === 'student' ? '/Dashboard' : '/Courses';
-                    }
-                })
-                .catch(error => {
-                    console.error('No Session Found.', error);
-                });
-        }
-    }, [isLocalEnv]);
-
     const handleLogin = (event) => {
         event.preventDefault();
         toast.info('Navigating to VT CAS login page...');

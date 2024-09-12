@@ -19,11 +19,11 @@ cd ..
 
 # upload frontend build
 echo "Uploading frontend build..."
-rsync -av --delete --exclude 'node_modules' --exclude '.git' ./frontend/build $SERVER_USER@$SERVER_HOST:$DEPLOY_DIR/frontend/
+rsync -av --delete --exclude 'node_modules' --exclude '.git' --exclude 'tests' ./frontend/build $SERVER_USER@$SERVER_HOST:$DEPLOY_DIR/frontend/
 
 # upload backend
 echo "Uploading backend..."
-rsync -av --delete --exclude 'node_modules' --exclude '.git' ./backend/ $SERVER_USER@$SERVER_HOST:$DEPLOY_DIR/backend/
+rsync -av --delete --exclude 'node_modules' --exclude '.git' --exclude 'tests' ./backend/ $SERVER_USER@$SERVER_HOST:$DEPLOY_DIR/backend/
 
 # upload PM2 ecosystem file
 echo "Uploading PM2 ecosystem file..."
