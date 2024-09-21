@@ -6,11 +6,14 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const LoginPage = () => {
     const [isLocalEnv] = useState(process.env.NODE_ENV === 'development');
-    const [role, setRole] = useState('student');
+    //use this param to determine if the user is a student or faculty in dev environment!
+    const [role, setRole] = useState('faculty');
 
     const handleLogin = (event) => {
         event.preventDefault();
-        toast.info('Navigating to VT CAS login page...');
+        toast.info('Navigating to VT CAS login page...', {
+            autoClose: 2000
+        });
         
         if(isLocalEnv) {
             console.log("THIS IS LOCAL!");
@@ -38,7 +41,7 @@ const LoginPage = () => {
                 <div className="max-w-md w-full space-y-8">
                     <div>
                         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                            Welcome
+                            Welcome to Crescendo!
                         </h2>
                         <p className="mt-2 text-center text-sm text-gray-600">
                             Please log in to access the system

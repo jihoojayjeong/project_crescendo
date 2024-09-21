@@ -1,40 +1,36 @@
-set -e #stop script on error
+#!/bin/bash
+set -e
 
-# server info
 SERVER_USER="sangwonlee"
 SERVER_HOST="crescendo.cs.vt.edu"
 DEPLOY_DIR="/home/sangwonlee/project_cresendo/deploy_v2"
+DOCKERHUB_USERNAME="jihoovt" 
+VERSION=$(date +%Y%m%d%H%M%S)
 
-# stop existing node.js server
-echo "Stopping existing Node.js server..."
-ssh $SERVER_USER@$SERVER_HOST "pm2 stop all"
+# Set PUBLIC_URL
+PUBLIC_URL="/"
 
-# build frontend
-echo "Installing frontend dependencies..."
-cd frontend
-npm install
-echo "Building frontend..."
-npm run build
-cd ..
+# Build and push Docker images
+echo "Building and pushing Docker images..."
+docker buildx build --platform linux/amd64,linux/arm64 -t $DOCKERHUB_USERNAME/crescendo-frontend:$VERSION -t $DOCKERHUB_USERNAME/crescendo-frontend:latest --build-arg PUBLIC_URL=$PUBLIC_URL --push frontend
+docker buildx build --platform linux/amd64,linux/arm64 -t $DOCKERHUB_USERNAME/crescendo-backend:$VERSION -t $DOCKERHUB_USERNAME/crescendo-backend:latest --push backend
 
-# upload frontend build
-echo "Uploading frontend build..."
-rsync -av --delete --exclude 'node_modules' --exclude '.git' --exclude 'tests' ./frontend/build $SERVER_USER@$SERVER_HOST:$DEPLOY_DIR/frontend/
+# Update docker-compose.prod.yml with new version tags
+sed -i '' "s|image: $DOCKERHUB_USERNAME/crescendo-frontend:.*|image: $DOCKERHUB_USERNAME/crescendo-frontend:$VERSION|" docker-compose.prod.yml
+sed -i '' "s|image: $DOCKERHUB_USERNAME/crescendo-backend:.*|image: $DOCKERHUB_USERNAME/crescendo-backend:$VERSION|" docker-compose.prod.yml
 
-# upload backend
-echo "Uploading backend..."
-rsync -av --delete --exclude 'node_modules' --exclude '.git' --exclude 'tests' ./backend/ $SERVER_USER@$SERVER_HOST:$DEPLOY_DIR/backend/
+# Transfer files to server
+echo "Transferring files to server..."
+rsync -avz docker-compose.prod.yml frontend.env backend.env $SERVER_USER@$SERVER_HOST:$DEPLOY_DIR/
 
-# upload PM2 ecosystem file
-echo "Uploading PM2 ecosystem file..."
-rsync -av ./ecosystem.config.js $SERVER_USER@$SERVER_HOST:$DEPLOY_DIR/backend/
-
-# run deploy command on server
+# Deploy on server
 echo "Deploying on server..."
-ssh $SERVER_USER@$SERVER_HOST "cd $DEPLOY_DIR/backend && npm install && NODE_ENV=production pm2 start ecosystem.config.js --update-env"
+ssh $SERVER_USER@$SERVER_HOST << EOF
+  cd $DEPLOY_DIR
+  export VERSION=$VERSION
+  docker compose -f docker-compose.prod.yml pull
+  docker compose -f docker-compose.prod.yml up -d
+  echo "Deployment completed."
+EOF
 
-# restart nginx to apply new configuration
-# echo "Restarting Nginx..."
-# ssh $SERVER_USER@$SERVER_HOST "sudo systemctl restart nginx"
-
-echo "Deployment complete!"
+echo "Deployment process finished!"

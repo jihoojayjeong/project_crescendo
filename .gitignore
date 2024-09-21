@@ -23,6 +23,8 @@ env
 backend/.env
 frontend/.env
 .env
+project_crescendo/backend.env
+project_crescendo/frontend.env
 
 # macOS system file
 .DS_Store

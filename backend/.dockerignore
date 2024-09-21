@@ -1,0 +1,31 @@
+# Node modules, build artifacts, and git files
+build
+dist
+.git
+test
+.DS_Store
+Thumbs.db
+
+# Logs and temporary files
+*.log
+logs
+*.tmp
+*.temp
+*.tsbuildinfo
+
+# Editor and OS-specific files
+.vscode
+.idea
+*.swp
+*.sublime-workspace
+*.sublime-project
+
+# Archive and compressed files
+*.tgz
+*.zip
+*.tar
+
+# Documentation files
+*.md
+*.pdf
+*.docx

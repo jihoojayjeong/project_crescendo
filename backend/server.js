@@ -24,7 +24,7 @@ app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-const mongoUri = process.env.NODE_ENV === 'production' ? process.env.MONGO_URI_PROD : process.env.MONGO_URI_DEV;
+const mongoUri = process.env.MONGO_URI || (process.env.NODE_ENV === 'production' ? process.env.MONGO_URI_PROD : process.env.MONGO_URI_DEV);
 console.log("MONGO URI: ", mongoUri);
 app.use(session({
   secret: 'your_secret_key',
@@ -50,8 +50,8 @@ app.use('/user', require('./routes/userRoutes'));
 
 if (process.env.NODE_ENV === 'production') {
   const httpsOptions = {
-    key: fs.readFileSync('/home/sangwonlee/cert/key.pem'),
-    cert: fs.readFileSync('/home/sangwonlee/cert/crescendo.cs.vt.edu.crt')
+    key: fs.readFileSync('/app/cert/key.pem'),
+    cert: fs.readFileSync('/app/cert/crescendo.cs.vt.edu.crt')
   };
   https.createServer(httpsOptions, app).listen(PORT, () => {
     console.log(`HTTPS Server started on ${PORT}`);

@@ -1,35 +1,51 @@
-version: '3.8'
-services:
-  backend:
-    build: ./backend
-    ports:
-      - "8080:8080"
-    environment:
-      - MONGO_URI=mongodb://mongo:27017/feedbackCollection
-    depends_on:
-      - mongo
-    networks:
-      - app-network
+# version: '3.8'
 
-  frontend:
-    build: ./frontend
-    ports:
-      - "3000:3000"
-    depends_on:
-      - backend
-    networks:
-      - app-network
+# services:
+#   frontend:
+#     image: jihoovt/crescendo-frontend:20240918112950
+#     ports:
+#       - "3000:80"
+#     depends_on:
+#       - backend
+#     env_file:
+#       - frontend.env
+#     networks:
+#       - internal_network
 
-  mongo:
-    image: mongo
-    volumes:
-      - mongo-data:/data/db
-    networks:
-      - app-network
 
-networks:
-  app-network:
-    driver: bridge
+#   backend:
+#     image: jihoovt/crescendo-backend:20240918112950
+#     ports:
+#       - "8080:8080"
+#     environment:
+#       - NODE_ENV=production
+#     command: npm run start:prod
+#     depends_on:
+#       - database
+#     env_file:
+#       - backend.env
+#     volumes:
+#       - /home/sangwonlee/cert:/app/cert
+#     networks:
+#       - internal_network
 
-volumes:
-  mongo-data:
+#   database:
+#     image: mongo:latest
+#     command: mongod --bind_ip_all
+#     ports:
+#       - "27017:27017"
+#     volumes:
+#       - mongo-data:/data/db
+#       - ./database/init-scripts:/docker-entrypoint-initdb.d
+#     environment:
+#       - MONGO_INITDB_ROOT_USERNAME=kevjayjeong906
+#       - MONGO_INITDB_ROOT_PASSWORD=crescendodbuser-1
+#     networks:
+#       - internal_network
+
+# networks:
+#   internal_network:
+#     driver: bridge
+
+# volumes:
+#   mongo-data:

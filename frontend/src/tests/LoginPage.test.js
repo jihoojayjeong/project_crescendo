@@ -4,6 +4,7 @@ import LoginPage from '../pages/loginPage';
 import axios from 'axios';
 
 jest.mock('axios');
+jest.mock('react-toastify/dist/ReactToastify.css', () => ({}));
 
 describe('LoginPage', () => {
   const originalEnv = process.env;
@@ -67,5 +68,17 @@ describe('LoginPage', () => {
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     expect(axios.get).not.toHaveBeenCalled();
+  });
+
+  test('checks session and redirects in production environment', async () => {
+    process.env.NODE_ENV = 'production';
+    
+    render(<LoginPage />);
+
+    await waitFor(() => {
+      expect(axios.get).toHaveBeenCalledWith('/auth/checkSession');
+    }, { timeout: 5000 });
+
+    expect(window.location.href).toBe('/Courses');
   });
 });
