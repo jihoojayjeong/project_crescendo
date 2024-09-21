@@ -1,0 +1,50 @@
+version: '3.8'
+
+networks:
+  app-network:
+    driver: bridge
+
+services:
+  frontend:
+    image: jihoovt/crescendo-frontend:20240921155510
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    env_file:
+      - frontend.env
+    networks:
+      - app-network
+
+  backend:
+    image: jihoovt/crescendo-backend:20240921155510
+    ports:
+      - "8080:8080"
+    environment:
+      - NODE_ENV=production
+    command: npm run start:prod
+    depends_on:
+      - database
+    env_file:
+      - backend.env
+    volumes:
+      - /home/sangwonlee/cert:/app/cert
+    networks:
+      - app-network
+
+  database:
+    image: mongo:latest
+    command: mongod --bind_ip_all
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+      - ./database/init-scripts:/docker-entrypoint-initdb.d
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=kevjayjeong906
+      - MONGO_INITDB_ROOT_PASSWORD=crescendodbuser-1
+    networks:
+      - app-network
+
+volumes:
+  mongo-data:
