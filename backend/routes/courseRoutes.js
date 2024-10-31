@@ -15,6 +15,7 @@ router.delete('/:courseId/students/:studentId', courseController.deleteStudentFr
 router.post('/:courseId/createGroups', courseController.createGroups);
 router.get('/:courseId/groups', courseController.getGroups);
 router.post('/:courseId/saveGroups', courseController.saveGroups);
+router.post('/:courseId/saveGroup', courseController.saveGroup);
 router.delete('/:courseId/groups/:groupId', courseController.deleteGroup);
 router.post('/:courseId/addStudent', courseController.addStudentToCourse);
 router.post('/:courseId/assignments', courseController.createAssignment);
@@ -22,9 +23,5 @@ router.put('/:courseId/assignments/:assignmentId', courseController.updateAssign
 router.delete('/:courseId/assignments/:assignmentId', courseController.deleteAssignment);
 router.get('/', authMiddleware, courseController.getCourses);
 router.get('/:courseId', authMiddleware, courseController.getCourse);
-router.post('/:courseId/feedbacks', courseController.createFeedback);
-router.get('/:courseId/feedbacks', courseController.getFeedbacks);
-router.put('/:courseId/feedbacks/:feedbackId', courseController.updateFeedback);
-router.delete('/:courseId/feedbacks/:feedbackId', courseController.deleteFeedback);
 
 module.exports = router;

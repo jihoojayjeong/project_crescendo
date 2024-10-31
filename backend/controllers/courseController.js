@@ -197,7 +197,8 @@ exports.createGroups = async (req, res) => {
     // save the group in the db
     course.groups = groups.map((group, index) => ({
       groupNumber: index + 1,
-      members: group
+      members: group,
+      name: "",
     }));
 
     await course.save();
@@ -226,6 +227,40 @@ exports.getGroups = async (req, res) => {
   }
 };
 
+
+exports.saveGroup = async (req, res) => {
+  const { courseId } = req.params;
+  const { group } = req.body;
+  console.log("group info:",group);
+
+  try {
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ message: 'Course not found' });
+    }
+
+    const existingGroupIndex = course.groups.findIndex(g => g.groupNumber === group.groupNumber);
+
+    if (existingGroupIndex !== -1) {
+      // If the group exists, update it
+      course.groups[existingGroupIndex] = { ...course.groups[existingGroupIndex], ...group };
+    } else {
+      // If it doesn't exist, add the new group
+      course.groups.push(group);
+    }
+
+    // Save the updated course document
+    await course.save();
+
+    // Populate the members data before sending the response
+   // await course.populate('groups.members', 'name email pid');
+
+    res.status(200).json({ groups: course.groups });
+  } catch (error) {
+    console.error('Error saving groups:', error);
+    res.status(500).json({ message: 'Failed to save groups', error: error.message });
+  }
+};
 exports.saveGroups = async (req, res) => {
   const { courseId } = req.params;
   const { groups } = req.body;
@@ -236,8 +271,10 @@ exports.saveGroups = async (req, res) => {
       return res.status(404).json({ message: 'Course not found' });
     }
 
+    
     const newGroups = groups.map(group => ({
       groupNumber: group.groupNumber,
+      name: group.name,
       members: group.members.map(member => new mongoose.Types.ObjectId(member._id))
     }));
 
@@ -376,93 +413,6 @@ exports.deleteAssignment = async (req, res) => {
     console.error('Error deleting assignment:', error);
     res.status(500).json({ message: 'Failed to delete assignment' });
   }
-};
-
-exports.createFeedback = async (req, res) => {
-    try {
-        const { courseId } = req.params;
-        const { fromGroup, toGroup, content } = req.body;
-
-        const course = await Course.findById(courseId);
-        if (!course) {
-            return res.status(404).json({ message: 'Course not found' });
-        }
-
-        course.feedbacks.push({
-            fromGroup,
-            toGroup,
-            content
-        });
-
-        await course.save();
-        res.status(201).json(course.feedbacks[course.feedbacks.length - 1]);
-    } catch (error) {
-        console.error('Error creating feedback:', error);
-        res.status(500).json({ message: 'Failed to create feedback' });
-    }
-};
-
-exports.getFeedbacks = async (req, res) => {
-    try {
-        const { courseId } = req.params;
-        const course = await Course.findById(courseId);
-        
-        if (!course) {
-            return res.status(404).json({ message: 'Course not found' });
-        }
-
-        res.status(200).json(course.feedbacks);
-    } catch (error) {
-        console.error('Error fetching feedbacks:', error);
-        res.status(500).json({ message: 'Failed to fetch feedbacks' });
-    }
-};
-
-exports.updateFeedback = async (req, res) => {
-    try {
-        const { courseId, feedbackId } = req.params;
-        const { content } = req.body;
-
-        const course = await Course.findById(courseId);
-        if (!course) {
-            return res.status(404).json({ message: 'Course not found' });
-        }
-
-        const feedback = course.feedbacks.id(feedbackId);
-        if (!feedback) {
-            return res.status(404).json({ message: 'Feedback not found' });
-        }
-
-        feedback.content = content;
-        feedback.updatedAt = Date.now();
-        await course.save();
-
-        res.status(200).json(feedback);
-    } catch (error) {
-        console.error('Error updating feedback:', error);
-        res.status(500).json({ message: 'Failed to update feedback' });
-    }
-};
-
-exports.deleteFeedback = async (req, res) => {
-    try {
-        const { courseId, feedbackId } = req.params;
-
-        const course = await Course.findById(courseId);
-        if (!course) {
-            return res.status(404).json({ message: 'Course not found' });
-        }
-
-        course.feedbacks = course.feedbacks.filter(
-            feedback => feedback._id.toString() !== feedbackId
-        );
-
-        await course.save();
-        res.status(200).json({ message: 'Feedback deleted successfully' });
-    } catch (error) {
-        console.error('Error deleting feedback:', error);
-        res.status(500).json({ message: 'Failed to delete feedback' });
-    }
 };
 
 

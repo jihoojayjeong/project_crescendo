@@ -1,5 +1,6 @@
 require('dotenv').config({
-  path: `.env.${process.env.NODE_ENV}`
+  //path: `.env.${process.env.NODE_ENV}`
+  path: `.env.${process.env.NODE_ENV || 'development'}`
 });
 console.log(`Loaded environment variablessssss from .env.${process.env.NODE_ENV}`);
 console.log("MONGO_URI_PROD:", process.env.MONGO_URI_PROD);
