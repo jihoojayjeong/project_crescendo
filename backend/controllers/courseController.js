@@ -378,4 +378,91 @@ exports.deleteAssignment = async (req, res) => {
   }
 };
 
+exports.createFeedback = async (req, res) => {
+    try {
+        const { courseId } = req.params;
+        const { fromGroup, toGroup, content } = req.body;
+
+        const course = await Course.findById(courseId);
+        if (!course) {
+            return res.status(404).json({ message: 'Course not found' });
+        }
+
+        course.feedbacks.push({
+            fromGroup,
+            toGroup,
+            content
+        });
+
+        await course.save();
+        res.status(201).json(course.feedbacks[course.feedbacks.length - 1]);
+    } catch (error) {
+        console.error('Error creating feedback:', error);
+        res.status(500).json({ message: 'Failed to create feedback' });
+    }
+};
+
+exports.getFeedbacks = async (req, res) => {
+    try {
+        const { courseId } = req.params;
+        const course = await Course.findById(courseId);
+        
+        if (!course) {
+            return res.status(404).json({ message: 'Course not found' });
+        }
+
+        res.status(200).json(course.feedbacks);
+    } catch (error) {
+        console.error('Error fetching feedbacks:', error);
+        res.status(500).json({ message: 'Failed to fetch feedbacks' });
+    }
+};
+
+exports.updateFeedback = async (req, res) => {
+    try {
+        const { courseId, feedbackId } = req.params;
+        const { content } = req.body;
+
+        const course = await Course.findById(courseId);
+        if (!course) {
+            return res.status(404).json({ message: 'Course not found' });
+        }
+
+        const feedback = course.feedbacks.id(feedbackId);
+        if (!feedback) {
+            return res.status(404).json({ message: 'Feedback not found' });
+        }
+
+        feedback.content = content;
+        feedback.updatedAt = Date.now();
+        await course.save();
+
+        res.status(200).json(feedback);
+    } catch (error) {
+        console.error('Error updating feedback:', error);
+        res.status(500).json({ message: 'Failed to update feedback' });
+    }
+};
+
+exports.deleteFeedback = async (req, res) => {
+    try {
+        const { courseId, feedbackId } = req.params;
+
+        const course = await Course.findById(courseId);
+        if (!course) {
+            return res.status(404).json({ message: 'Course not found' });
+        }
+
+        course.feedbacks = course.feedbacks.filter(
+            feedback => feedback._id.toString() !== feedbackId
+        );
+
+        await course.save();
+        res.status(200).json({ message: 'Feedback deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting feedback:', error);
+        res.status(500).json({ message: 'Failed to delete feedback' });
+    }
+};
+
 
