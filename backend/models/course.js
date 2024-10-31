@@ -24,6 +24,7 @@ const courseSchema = new mongoose.Schema({
   }],
   groups: [{
     groupNumber: Number,
+    name: String,
     members: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User'
@@ -43,28 +44,6 @@ const courseSchema = new mongoose.Schema({
       required: true
     },
     createdAt: {
-      type: Date,
-      default: Date.now
-    }
-  }],
-  feedbacks: [{
-    fromGroup: {
-      type: String,
-      required: true
-    },
-    toGroup: {
-      type: String,
-      required: true
-    },
-    content: {
-      type: String,
-      required: true
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now
-    },
-    updatedAt: {
       type: Date,
       default: Date.now
     }

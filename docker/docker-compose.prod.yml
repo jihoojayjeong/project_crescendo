@@ -6,7 +6,7 @@ networks:
 
 services:
   frontend:
-    image: jihoovt/crescendo-frontend:20241031154019
+    image: jihoovt/crescendo-frontend:20240921155510
     ports:
       - "3000:80"
     depends_on:
@@ -17,7 +17,7 @@ services:
       - app-network
 
   backend:
-    image: jihoovt/crescendo-backend:20241031154019
+    image: jihoovt/crescendo-backend:20240921155510
     ports:
       - "8080:8080"
     environment:

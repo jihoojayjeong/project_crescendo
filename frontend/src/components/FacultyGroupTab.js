@@ -38,6 +38,7 @@ const FacultyGroupTab = ({ onGroupSave }) => {
         });
         setStudents(studentsResponse.data);  
         const sortedGroups = groupsResponse.data.groups.sort((a, b) => a.groupNumber - b.groupNumber);
+        console.log("sorted groups fetched from backend:", sortedGroups);
         setGroups(sortedGroups);  
 
         if (sortedGroups.length > 0) {
@@ -114,7 +115,8 @@ const FacultyGroupTab = ({ onGroupSave }) => {
     const newGroupNumber = availableGroupNumbers.length > 0 ? availableGroupNumbers[0] : (groups.length + tempGroups.length + 1);
     const newGroup = {
       groupNumber: newGroupNumber,
-      members: []
+      members: [],
+      name:"",
     };
     setTempGroups([...tempGroups, newGroup]);
     setAvailableGroupNumbers(availableGroupNumbers.filter(num => num !== newGroupNumber));
@@ -154,6 +156,7 @@ const FacultyGroupTab = ({ onGroupSave }) => {
   const handleSaveGroup = async () => {
     try {
       const updatedGroups = [...groups, ...tempGroups].reduce((acc, group) => {
+        //console.log("Group in facultygroups compnent:", group);
         const existingGroupIndex = acc.findIndex(g => g.groupNumber === group.groupNumber);
         if (existingGroupIndex !== -1) {
           acc[existingGroupIndex] = group;
@@ -162,6 +165,8 @@ const FacultyGroupTab = ({ onGroupSave }) => {
         }
         return acc;
       }, []);
+
+      //console.log("updatedGroups",updatedGroup);
 
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/courses/${courseId}/saveGroups`, {
         groups: updatedGroups
@@ -187,6 +192,11 @@ const FacultyGroupTab = ({ onGroupSave }) => {
       alert('Failed to save group. Please try again.');
     }
   };
+  
+  const handleGroupName = (groups) => {
+    setGroups(groups);
+  }
+
 
   const getAvailableStudents = () => {
     const assignedStudentIds = groups.flatMap(group => group.members.map(member => member._id));
@@ -212,7 +222,7 @@ const FacultyGroupTab = ({ onGroupSave }) => {
         {groups.map((group, index) => (
           <div key={index} className="bg-white rounded-lg shadow-md hover:shadow-lg transition duration-300 ease-in-out overflow-hidden">
             <div className="px-4 py-3 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
-              <h4 className="text-lg font-semibold text-gray-800">Group {group.groupNumber}</h4>
+              <h4 className="text-lg font-semibold text-gray-800">{group.name}</h4>
               <div>
                 <button onClick={(e) => { e.stopPropagation(); handleEditGroup(group); }} className="text-indigo-600 hover:text-indigo-800 mr-2">
                   <FaEdit />
@@ -255,6 +265,7 @@ const FacultyGroupTab = ({ onGroupSave }) => {
         handleSelectStudent={handleSelectStudent}
         handleSaveGroup={handleSaveGroup}
         handleRemoveStudent={handleRemoveStudent}
+        handleGroupName = {handleGroupName}
       />
 
       <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
