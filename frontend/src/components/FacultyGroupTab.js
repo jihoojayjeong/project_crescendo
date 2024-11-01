@@ -193,9 +193,10 @@ const FacultyGroupTab = ({ onGroupSave }) => {
     }
   };
   
-  const handleGroupName = (groups) => {
-    setGroups(groups);
-  }
+  const handleGroupName = (updatedGroups) => {
+    const sortedGroups = updatedGroups.sort((a, b) => a.groupNumber - b.groupNumber);
+    setGroups(sortedGroups);
+  };
 
 
   const getAvailableStudents = () => {
@@ -219,10 +220,12 @@ const FacultyGroupTab = ({ onGroupSave }) => {
       </button>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {groups.map((group, index) => (
-          <div key={index} className="bg-white rounded-lg shadow-md hover:shadow-lg transition duration-300 ease-in-out overflow-hidden">
+        {groups.map((group) => (
+          <div key={group._id} className="bg-white rounded-lg shadow-md hover:shadow-lg transition duration-300 ease-in-out overflow-hidden">
             <div className="px-4 py-3 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
-              <h4 className="text-lg font-semibold text-gray-800">{group.name}</h4>
+              <h4 className="text-lg font-semibold text-gray-800">
+                {group.name || `Group ${group.groupNumber}`}
+              </h4>
               <div>
                 <button onClick={(e) => { e.stopPropagation(); handleEditGroup(group); }} className="text-indigo-600 hover:text-indigo-800 mr-2">
                   <FaEdit />
@@ -233,8 +236,11 @@ const FacultyGroupTab = ({ onGroupSave }) => {
               </div>
             </div>
             <ul className="px-4 py-3">
-              {group.members.map((member) => (
-                <li key={member._id} className="text-sm text-gray-600 mb-1">
+              {group.members.map((member, index) => (
+                <li 
+                  key={`${group._id}-member-${member._id || index}`} 
+                  className="text-sm text-gray-600 mb-1"
+                >
                   {member.name} <span className="text-gray-400">({member.email})</span>
                 </li>
               ))}
