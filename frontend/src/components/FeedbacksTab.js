@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { FaUser } from 'react-icons/fa';
+import { 
+    FaUser, 
+    FaPaperPlane, 
+    FaInbox,         
+    FaRegPaperPlane  
+} from 'react-icons/fa';
 import ViewFeedbacksModal from './ViewFeedbacksModal';
 import FeedbackModal from './FeedbackModal';
 
@@ -58,13 +63,16 @@ const FeedbacksTab = ({ course }) => {
 
     return (
         <div className="space-y-6">
-            <div className="bg-white p-6 rounded-lg shadow">
-                <h2 className="text-2xl font-semibold mb-4">My Group's Feedbacks</h2>
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                <h2 className="text-2xl font-semibold mb-4 text-gray-800">My Group's Feedbacks</h2>
                 <button
                     onClick={() => handleViewFeedbacks({ groupNumber: userGroup }, 'received')}
-                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                    className="inline-flex items-center px-4 py-2 bg-indigo-50 text-indigo-700 
+                             hover:bg-indigo-100 rounded-lg transition-all duration-200 
+                             shadow-sm hover:shadow space-x-2"
                 >
-                    See feedbacks received
+                    <FaInbox className="text-lg" />
+                    <span>View Received Feedbacks</span>
                 </button>
             </div>
 
@@ -72,8 +80,8 @@ const FeedbacksTab = ({ course }) => {
                 {groups
                     .filter(group => group.groupNumber.toString() !== userGroup)
                     .map((group) => (
-                        <div key={group._id} className="bg-white rounded-lg shadow-md p-6">
-                            <h3 className="text-xl font-semibold mb-4">
+                        <div key={group._id} className="bg-white rounded-lg shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all duration-200">
+                            <h3 className="text-xl font-semibold mb-4 text-gray-800">
                                 {group.name || `Group ${group.groupNumber}`}
                             </h3>
                             <div className="mb-4">
@@ -90,21 +98,29 @@ const FeedbacksTab = ({ course }) => {
                                     ))}
                                 </ul>
                             </div>
-                            <div className="space-y-2">
+                            <div className="space-y-3">
                                 <button
                                     onClick={() => {
                                         setSelectedGroup(group);
                                         setShowFeedbackModal(true);
                                     }}
-                                    className="w-full px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                                    className="w-full inline-flex items-center justify-center px-4 py-2 
+                                             bg-gradient-to-r from-emerald-500 to-teal-500 text-white 
+                                             rounded-lg hover:from-emerald-600 hover:to-teal-600 
+                                             transition-all duration-200 shadow-sm hover:shadow space-x-2"
                                 >
-                                    Send Feedback
+                                    <FaPaperPlane className="text-lg" />
+                                    <span>Send Feedback</span>
                                 </button>
                                 <button
                                     onClick={() => handleViewFeedbacks(group, 'sent')}
-                                    className="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                    className="w-full inline-flex items-center justify-center px-4 py-2 
+                                             bg-gradient-to-r from-violet-500 to-purple-500 text-white 
+                                             rounded-lg hover:from-violet-600 hover:to-purple-600 
+                                             transition-all duration-200 shadow-sm hover:shadow space-x-2"
                                 >
-                                    See feedbacks sent
+                                    <FaRegPaperPlane className="text-lg" />
+                                    <span>View Sent Feedbacks</span>
                                 </button>
                             </div>
                         </div>
