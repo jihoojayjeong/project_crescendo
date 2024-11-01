@@ -6,6 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import StudentSidebar from '../components/StudentSidebar';
 import StudentsAssignmentTab from '../components/StudentsAssignmentTab';
 import TeamsTab from '../components/TeamsTab';
+import FeedbacksTab from '../components/FeedbacksTab';
 import { FaBook, FaCalendar, FaHashtag, FaUsers } from 'react-icons/fa';
 import { handleLogout } from '../utils/casUtils';
 
@@ -134,8 +135,7 @@ const CoursePage = () => {
                                 <StudentsAssignmentTab course={course} />
                             )}
                             {activeTab === 'feedbacks' && (
-                                <h2 className="text-2xl font-semibold mb-4">Feedbacks</h2>
-                                // Feedbacks content here
+                                <FeedbacksTab course={course} />
                             )}
                         </div>
                     </div>

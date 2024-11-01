@@ -415,4 +415,99 @@ exports.deleteAssignment = async (req, res) => {
   }
 };
 
+exports.createFeedback = async (req, res) => {
+    try {
+        const { courseId } = req.params;
+        const { fromGroup, toGroup, content } = req.body;
+
+        const course = await Course.findById(courseId);
+        if (!course) {
+            return res.status(404).json({ message: 'Course not found' });
+        }
+
+        course.feedbacks.push({
+            fromGroup,
+            toGroup,
+            content,
+            createdAt: new Date()
+        });
+
+        await course.save();
+        res.status(201).json(course.feedbacks[course.feedbacks.length - 1]);
+    } catch (error) {
+        console.error('Error creating feedback:', error);
+        res.status(500).json({ message: 'Failed to create feedback' });
+    }
+};
+
+exports.getFeedbacks = async (req, res) => {
+    try {
+        const { courseId } = req.params;
+        const course = await Course.findById(courseId);
+        
+        if (!course) {
+            return res.status(404).json({ message: 'Course not found' });
+        }
+
+        res.status(200).json(course.feedbacks);
+    } catch (error) {
+        console.error('Error fetching feedbacks:', error);
+        res.status(500).json({ message: 'Failed to fetch feedbacks' });
+    }
+};
+
+// 피드백 수정
+exports.updateFeedback = async (req, res) => {
+    try {
+        const { courseId, feedbackId } = req.params;
+        const { content } = req.body;
+
+        const course = await Course.findOneAndUpdate(
+            { 
+                '_id': courseId,
+                'feedbacks._id': feedbackId 
+            },
+            { 
+                '$set': {
+                    'feedbacks.$.content': content,
+                    'feedbacks.$.updatedAt': new Date()
+                } 
+            },
+            { new: true }
+        );
+
+        if (!course) {
+            return res.status(404).json({ message: 'Feedback not found' });
+        }
+
+        const updatedFeedback = course.feedbacks.find(f => f._id.toString() === feedbackId);
+        res.json(updatedFeedback);
+    } catch (error) {
+        console.error('Error updating feedback:', error);
+        res.status(500).json({ message: 'Failed to update feedback' });
+    }
+};
+
+// 피드백 삭제
+exports.deleteFeedback = async (req, res) => {
+    try {
+        const { courseId, feedbackId } = req.params;
+
+        const course = await Course.findById(courseId);
+        if (!course) {
+            return res.status(404).json({ message: 'Course not found' });
+        }
+
+        course.feedbacks = course.feedbacks.filter(
+            feedback => feedback._id.toString() !== feedbackId
+        );
+
+        await course.save();
+        res.status(200).json({ message: 'Feedback deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting feedback:', error);
+        res.status(500).json({ message: 'Failed to delete feedback' });
+    }
+};
+
 

@@ -3,8 +3,10 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { Modal } from 'react-bootstrap';
 import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 import CreateGroupModal from './CreateGroupModal';
 import EditGroupModal from './EditGroupModal';
+import ViewFeedbacksModal from './ViewFeedbacksModal';
 
 const FacultyGroupTab = ({ onGroupSave }) => {
   const { courseId } = useParams();
@@ -19,6 +21,11 @@ const FacultyGroupTab = ({ onGroupSave }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [groupToDelete, setGroupToDelete] = useState(null);
   const [availableGroupNumbers, setAvailableGroupNumbers] = useState([]);
+  const [showFeedbacksModal, setShowFeedbacksModal] = useState(false);
+  const [selectedFeedbacks, setSelectedFeedbacks] = useState([]);
+  const [feedbackModalType, setFeedbackModalType] = useState('');
+  const [selectedGroupNumber, setSelectedGroupNumber] = useState(null);
+  const [userGroup, setUserGroup] = useState(null);
 
   useEffect(() => {
     const fetchGroupsAndStudents = async () => {
@@ -210,6 +217,27 @@ const FacultyGroupTab = ({ onGroupSave }) => {
     return students.filter(student => !assignedStudentIds.includes(student._id));
   };
 
+  const handleViewFeedbacks = async (group, type) => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/courses/${courseId}/feedbacks`,
+        { withCredentials: true }
+      );
+      
+      const filteredFeedbacks = type === 'received'
+        ? response.data.filter(f => f.toGroup === group.groupNumber.toString())
+        : response.data.filter(f => f.fromGroup === userGroup && f.toGroup === group.groupNumber.toString());
+      
+      setSelectedFeedbacks(filteredFeedbacks);
+      setFeedbackModalType(type);
+      setSelectedGroupNumber(group.groupNumber);
+      setShowFeedbacksModal(true);
+    } catch (error) {
+      console.error('Error fetching feedbacks:', error);
+      toast.error('Failed to fetch feedbacks');
+    }
+  };
+
   return (
     <div className="p-6 bg-gray-100">
       <button 
@@ -245,6 +273,23 @@ const FacultyGroupTab = ({ onGroupSave }) => {
                 </li>
               ))}
             </ul>
+            <div className="px-4 py-3 flex justify-end space-x-2">
+              {group.groupNumber.toString() === userGroup ? (
+                <button
+                  onClick={() => handleViewFeedbacks(group, 'received')}
+                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                >
+                  See feedbacks received
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleViewFeedbacks(group, 'sent')}
+                  className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                >
+                  See feedbacks sent
+                </button>
+              )}
+            </div>
           </div>
         ))}
       </div>
@@ -296,6 +341,19 @@ const FacultyGroupTab = ({ onGroupSave }) => {
           </button>
         </Modal.Footer>
       </Modal>
+
+      <ViewFeedbacksModal
+        show={showFeedbacksModal}
+        onHide={() => setShowFeedbacksModal(false)}
+        feedbacks={selectedFeedbacks}
+        type={feedbackModalType}
+        groupNumber={selectedGroupNumber}
+        courseId={courseId}
+        onFeedbackUpdate={() => handleViewFeedbacks(
+          { groupNumber: selectedGroupNumber },
+          feedbackModalType
+        )}
+      />
     </div>
   );
 };

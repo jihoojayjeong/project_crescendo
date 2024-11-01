@@ -47,6 +47,19 @@ const courseSchema = new mongoose.Schema({
       type: Date,
       default: Date.now
     }
+  }],
+  feedbacks: [{
+    fromGroup: String,
+    toGroup: String,
+    content: String,
+    createdAt: {
+      type: Date,
+      default: Date.now
+    },
+    updatedAt: {
+      type: Date,
+      default: Date.now
+    }
   }]
 }, {
   timestamps: true
