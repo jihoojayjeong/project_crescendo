@@ -23,6 +23,23 @@ const CoursePage = () => {
     const [user, setUser] = useState(null);
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('assignments');
+    const [groupInfo, setGroupInfo] = useState(null);
+
+    const fetchGroupInfo = async () => {
+        try {
+            const response = await axios.get(
+                `${process.env.REACT_APP_API_URL}/courses/${courseId}/groups`,
+                { withCredentials: true }
+            );
+            const userGroup = course?.userGroup;
+            const groupData = response.data.groups.find(
+                group => group.groupNumber.toString() === userGroup
+            );
+            setGroupInfo(groupData);
+        } catch (error) {
+            console.error('Error fetching group info:', error);
+        }
+    };
 
     useEffect(() => {
         const fetchCourseDetails = async () => {
@@ -34,12 +51,23 @@ const CoursePage = () => {
                     }
                 });
                 setCourse(response.data);
-                console.log('Course data:', response.data);
             } catch (error) {
                 console.error('Error fetching course details:', error);
             }
         };
 
+        fetchCourseDetails();
+    }, [courseId]);
+
+    useEffect(() => {
+        if (course?.userGroup) {
+            fetchGroupInfo();
+            const intervalId = setInterval(fetchGroupInfo, 5000);
+            return () => clearInterval(intervalId);
+        }
+    }, [course?.userGroup]);
+
+    useEffect(() => {
         const fetchUserData = async () => {
             try {
                 const response = await axios.get(`${process.env.REACT_APP_API_URL}/user/getUser`, {
@@ -55,7 +83,6 @@ const CoursePage = () => {
             }
         };
 
-        fetchCourseDetails();
         fetchUserData();
     }, [courseId]);
 
@@ -90,7 +117,7 @@ const CoursePage = () => {
             />
             <MainContent isSidebarOpen={isSidebarOpen}>
                 <div className="p-8">
-                    <h1 className="text-4xl font-bold mb-6 text-maroon-800">Course Details</h1>
+                    <h1 className="text-4xl font-bold mb-6 text-maroon-800">Course Page</h1>
                     <div className="bg-white shadow-lg rounded-lg p-6 mb-8">
                         {course && (
                             <>
@@ -105,7 +132,7 @@ const CoursePage = () => {
                                 </p>
                                 <p className="text-xl mb-2 text-gray-600 flex items-center">
                                     <FaUsers className="mr-2 text-maroon-800" /> Group: <span className="font-medium ml-1">
-                                        {course.userGroup || 'Not assigned'}
+                                        {groupInfo?.name || `Group ${course.userGroup}`}
                                     </span>
                                 </p>
                             </>

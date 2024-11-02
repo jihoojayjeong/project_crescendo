@@ -20,23 +20,27 @@ const FeedbacksTab = ({ course }) => {
     const [showFeedbackModal, setShowFeedbackModal] = useState(false);
     const [selectedGroup, setSelectedGroup] = useState(null);
 
-    useEffect(() => {
-        const fetchGroups = async () => {
-            try {
-                const groupsResponse = await axios.get(
-                    `${process.env.REACT_APP_API_URL}/courses/${course._id}/groups`,
-                    { withCredentials: true }
-                );
-                setGroups(groupsResponse.data.groups);
-            } catch (error) {
-                console.error('Error fetching groups:', error);
-                toast.error('Failed to fetch groups');
-            }
-        };
+    const fetchGroups = async () => {
+        try {
+            const groupsResponse = await axios.get(
+                `${process.env.REACT_APP_API_URL}/courses/${course._id}/groups`,
+                { withCredentials: true }
+            );
+            setGroups(groupsResponse.data.groups);
+        } catch (error) {
+            console.error('Error fetching groups:', error);
+            toast.error('Failed to fetch groups');
+        }
+    };
 
+    useEffect(() => {
         if (course) {
             setUserGroup(course.userGroup);
             fetchGroups();
+
+            const intervalId = setInterval(fetchGroups, 5000);
+
+            return () => clearInterval(intervalId);
         }
     }, [course]);
 
