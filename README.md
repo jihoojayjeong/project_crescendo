@@ -1,5 +1,3 @@
-Certainly, 정지후님! 아래는 제공해 주신 내용을 바탕으로 영어로 작성된 개발자 친화적인 README.md 파일입니다. 제목, 섹션 구분, 리스트, 코드 블록, 그리고 이모지를 사용하여 가독성을 높였습니다.
-
 🚀 Crescendo Research Project
 
 📚 Table of Contents
