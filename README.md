@@ -1,4 +1,4 @@
-# 🚀 Crescendo Research Project
+# 🚀 Crescendo Research Project - on-premises based project
 
 ---
 
@@ -9,7 +9,7 @@ The **Crescendo Research Project** aims to enhance project-based learning outcom
 
 ## 🛠️ Technical Stack
 - **Backend:** Node.js, Express
-- **Frontend:** React
+- **Frontend:** React, TailwindCSS
 - **Database:** MongoDB (NoSQL)
 - **Server:** Nginx
 - **Containerization:** Docker
@@ -133,4 +133,4 @@ Contributions are welcome! Please fork the repository and create a pull request 
 
 ### 📧 Contact
 
-For any inquiries or issues, please contact [your.email@example.com](mailto:jghdg1234@gmail.com).
+For any inquiries or issues, please contact [jghdg1234@gmail.com](mailto:jghdg1234@gmail.com).
