@@ -1,23 +1,5 @@
 # 🚀 Crescendo Research Project
 
-## 📚 Table of Contents
-- [Project Description](#project-description)
-- [Technical Stack](#technical-stack)
-- [Motivation](#motivation)
-- [Challenges with Peer Assessment](#challenges-with-peer-assessment)
-- [PI’s Teaching Practice to Address the Problem](#pis-teaching-practice-to-address-the-problem)
-  - [🌟 Peer-Review Feedback System](#peer-review-feedback-system)
-  - [📈 Key Benefits](#key-benefits)
-- [🚢 Deployment Instructions](#deployment-instructions)
-  - [⚠️ Important](#important)
-  - [🔧 How to Build and Deploy](#how-to-build-and-deploy)
-  - [📦 Docker and CI/CD Automation](#docker-and-cicd-automation)
-  - [👤 Dummy User Data](#dummy-user-data)
-- [📌 Additional Notes](#additional-notes)
-- [📝 License](#license)
-- [🤝 Contributing](#contributing)
-- [📧 Contact](#contact)
-
 ---
 
 ## 📄 Project Description
@@ -88,3 +70,67 @@ Professor Lee developed a novel peer-review feedback system for his **Creative C
 1. **Run the Deployment Script:**
    ```bash
    bash deploy.sh
+2. **Provide Server Details When Prompted:**
+   - **Server IP Address**
+   - **Username**
+   - **Password**
+
+3. **Access the Website:**
+   - After deployment, visit the website using the provided public IP address.
+
+---
+
+### 📦 Docker and CI/CD Automation
+
+The deployment process is optimized using Docker, achieving significant improvements:
+
+- **Deployment Time:** Reduced by 50%
+- **CPU Usage:** Reduced by 95%
+- **System Call Time:** Reduced by 71%
+
+A custom CI/CD pipeline automates the deployment process, cutting deployment time by 60% and minimizing human errors during production releases.
+
+---
+
+### 👤 Dummy User Data
+
+To generate dummy user data, use the `scripts/seed.js` file.
+
+#### Steps to Run the Script
+
+1. **Run the Seed Users Script:**
+   ```bash
+   node scripts/seedUsers.js
+3. **Access the Website:**
+   - After running the scripts, access the website via the public IP address.
+
+---
+
+### 📌 Additional Notes
+
+- **Environment Variables**
+  - Ensure all necessary environment variables are set in the `.env.development` file.
+
+- **Common Issues**
+  - If you encounter the following error during `npm start`:
+    ```
+    TypeError: Router.use() requires a middleware function
+    ```
+
+---
+
+### 📝 License
+
+This project is licensed under the MIT License.
+
+---
+
+### 🤝 Contributing
+
+Contributions are welcome! Please fork the repository and create a pull request with your changes.
+
+---
+
+### 📧 Contact
+
+For any inquiries or issues, please contact [your.email@example.com](mailto:jghdg1234@gmail.com).
