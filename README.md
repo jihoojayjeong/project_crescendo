@@ -1,43 +1,155 @@
-# Research Project (high level) Description:
+Certainly, 정지후님! 아래는 제공해 주신 내용을 바탕으로 영어로 작성된 개발자 친화적인 README.md 파일입니다. 제목, 섹션 구분, 리스트, 코드 블록, 그리고 이모지를 사용하여 가독성을 높였습니다.
 
-Technical Stack : node.js, React, Express, MongoDB(NoSQL), nginx
+🚀 Crescendo Research Project
 
-**Motivation:**
+📚 Table of Contents
 
-Many undergraduate courses, especially senior-level courses, involve project-based learning. For example, the Computer Science department at VT has many capstone courses which are designed “to synthesize and integrate skills and knowledge acquired throughout the CS undergraduate curriculum, and which includes a significant design experience, where teamwork and written and oral communication are a key part of that design experience [
+	•	Project Description
+	•	Technical Stack
+	•	Motivation
+	•	Challenges with Peer Assessment
+	•	PI’s Teaching Practice to Address the Problem
+	•	🌟 Peer-Review Feedback System
+	•	📈 Key Benefits
+	•	🚢 Deployment Instructions
+	•	⚠️ Important
+	•	🔧 How to Build and Deploy
+	•	📦 Docker and CI/CD Automation
+	•	👤 Dummy User Data
 
-[link](https://cs.vt.edu/Undergraduate/courses.html#capstones)
+📄 Project Description
 
-].“In such project-based courses, typically, professors ask students to give milestone presentations so that professors can check their progress, give feedback to each team, and allow students to see how other teams have made progress. By nature, getting feedback from milestone presentations can benefit the team in gaining ideas for improving the project and successful final artifacts.
+The Crescendo Research Project aims to enhance project-based learning outcomes through innovative peer-review systems and optimized deployment processes. This project integrates modern technologies and pedagogical strategies to foster a collaborative and efficient learning environment.
 
-Some instructors use a peer-assessment system so that peers’ evaluations will collectively determine the team’s grade for the presentation. Peer assessment has proven to have positive learning outcomes. Importantly, peer assessment is a social process; some claim that anonymity might have advantages. While it can be beneficial for students to learn from evaluating other students’ work, give constructive feedback, and receive feedback from others, students typically do not feel comfortable allowing their peers to determine their grades [
+🛠️ Technical Stack
 
-[link](https://www.tandfonline.com/doi/abs/10.1080/02602938.2019.1600186)
+	•	Backend: Node.js, Express
+	•	Frontend: React
+	•	Database: MongoDB (NoSQL)
+	•	Server: Nginx
+	•	Containerization: Docker
 
-]. Students’ grading may be inconsistent across individuals, and some can even game the system in favor of their grades. If we only include peer-review feedback without grading, eliciting participation can be another challenge for instructors.
+🎯 Motivation
 
-**PI’s teaching practice to address the problem:**
+Many undergraduate courses, especially senior-level courses, incorporate project-based learning. For example, the Computer Science department at Virginia Tech (VT) offers numerous capstone courses designed to synthesize and integrate skills and knowledge acquired throughout the CS undergraduate curriculum. These courses emphasize significant design experiences, where teamwork and written and oral communication are key components.
 
-PI Lee has developed and applied a novel peer-review feedback system in his Creative Computing Studio capstone course that he taught four times. In this class activity, the peer-assessment system has been modified; the class gives feedback to a presenting team, and the presenting team evaluates the feedback they received from their peers based on the quality of the feedback. For example, Whenever there is a group presentation, the PI asks everyone in the class to give feedback to the presenting teams. For example, suppose there are ten teams of four students in a project-based class. In that case, each student will have to pay attention to everyone else’s presentations (9 presentations) except their own presentation and leave feedback in an online survey. The online survey has three types of feedback entries: “I like (positives),” “I wish (improvements),” and “What if (suggestions)” sections. Once those responses are collected, the PI anonymizes the feedback and gives feedback to the team. Then the team has to evaluate each peer’s feedback based on simple criteria. (e.g., is it specific? Is it justified? is it actionable? Is it positive? [
+In such project-based courses, professors typically require milestone presentations to monitor progress, provide feedback, and allow students to observe the advancements of other teams. Feedback from these presentations can help teams generate ideas for improving their projects and achieving successful final outcomes.
 
-[link](https://dl.acm.org/doi/pdf/10.1145/3173574.3173629)
+🛡️ Challenges with Peer Assessment
 
-]). Then one student will get their grades from 9 different teams, eventually becoming the student’s final grade for the assignment (5% of the course grade). This crowdsourced peer-review system has been developed over four iterations of the same course and is now used consistently. Here’s a sample spreadsheet that one team received from their peers. The PI anticipates multiple benefits of this system. First, students can practice giving constructive feedback, as their grade depends on the quality of the feedback. Second, each team may take the crowdsourced feedback more seriously than the instructor’s feedback as they find some common theme that emerges from multiple students. Third, the entire class can develop a sense of community as they give feedback to their peers over the semester, witnessing the progress of each team as a result of forced peer-review systems.
->>>>>>> 14ff959f9eb8edf1bf979cc421eeaa1a56648435
-- !!!!!!!!!! DO NOT DEPLOY ON ANY BRANCH OTHER THAN MASTER !!!!!!!!
-- Impossible to deploy using github action because of the domain restriction.
- - instead of using github workflow, we are using deploy.sh to deploy the backend server.
- - how to build and deploy : 
- 1. run "bash deploy.sh" on local server
- 2. It will ask for the server ip address, username, and password.
- 3. After the deployment is complete, you can access the website via the public ip address.
+While peer assessment can lead to positive learning outcomes, it also presents several challenges:
 
- - For the dummy user data, we use scripts/seed.js to generate the dummy data.
- - how to run the script : 
- 1. run "node scripts/seedUsers.js" on local server
- 2. run addUsersToCourse.js to add users to the course you want. Make sure to put the correct courseId.
- 3. After the script is complete, you can access the website via the public ip address.
+	•	Inconsistent Grading: Individual grading standards may vary across students.
+	•	Potential for Gaming the System: Some students might manipulate assessments to favor their own grades.
+	•	Low Participation: Instructors may face difficulties in eliciting participation from all students.
+	•	Comfort Levels: Students may feel uncomfortable allowing peers to influence their grades.
+
+💡 PI’s Teaching Practice to Address the Problem
+
+🌟 Peer-Review Feedback System
+
+Professor Lee developed and implemented a novel peer-review feedback system in his Creative Computing Studio capstone course, which he has taught four times. The system operates as follows:
+
+	1.	Providing Feedback:
+	•	After each group presentation, students provide feedback to the presenting teams.
+	•	Feedback is collected via an online survey with three sections:
+	•	I like (Positives)
+	•	I wish (Improvements)
+	•	What if (Suggestions)
+	2.	Evaluating Feedback:
+	•	Presenting teams evaluate the quality of the received feedback based on criteria such as:
+	•	Specificity
+	•	Justification
+	•	Actionability
+	•	Positivity
+	3.	Grading:
+	•	Each student receives grades from nine different teams, contributing to their final assignment grade (5% of the course grade).
+
+This crowdsourced peer-review system has been refined over four iterations and is now consistently used in the course.
+
+📈 Key Benefits
+
+	•	Constructive Feedback: Students are motivated to provide meaningful feedback as it directly impacts their grades.
+	•	Crowdsourced Insights: Teams receive valuable feedback with consistent themes, enhancing the credibility and usefulness of the input.
+	•	Community Building: Regular feedback fosters a collaborative environment, allowing students to witness each team’s progress and development over the semester.
+
+🚢 Deployment Instructions
+
+⚠️ Important
+
+DO NOT DEPLOY ON ANY BRANCH OTHER THAN MASTER! Deployment using GitHub Actions is restricted due to domain limitations. Instead, use the deploy.sh script to deploy the backend server.
+
+🔧 How to Build and Deploy
+
+	1.	Run the Deployment Script:
+
+bash deploy.sh
 
 
+	2.	Provide Server Details When Prompted:
+	•	Server IP Address
+	•	Username
+	•	Password
+	3.	Access the Website:
+	•	After deployment, access the website via the provided public IP address.
 
- 
+📦 Docker and CI/CD Automation
+
+We optimized the deployment process using Docker, achieving significant improvements:
+
+	•	Deployment Time: Reduced by 50%
+	•	CPU Usage: Reduced by 95%
+	•	System Call Time: Reduced by 71%
+
+A custom CI/CD pipeline automates the deployment process, cutting deployment time by 60% and minimizing human errors during production releases.
+
+👤 Dummy User Data
+
+To generate dummy user data, use the scripts/seed.js file.
+
+Steps to Run the Script:
+
+	1.	Run the Seed Users Script:
+
+node scripts/seedUsers.js
+
+
+	2.	Add Users to a Course:
+
+node scripts/addUsersToCourse.js
+
+	•	Ensure to input the correct courseId.
+
+	3.	Access the Website:
+	•	After running the scripts, access the website via the public IP address.
+
+📌 Additional Notes
+
+	•	Environment Variables:
+	•	Ensure all necessary environment variables are set in the .env.development file.
+	•	Example:
+
+MONGO_URI_PROD=your_production_mongo_uri
+MONGO_URI=mongodb://localhost:27017/crescendo
+
+
+	•	Common Issues:
+	•	If you encounter the following error during npm start:
+
+TypeError: Router.use() requires a middleware function
+
+	•	Solution: Ensure that all middleware functions are correctly imported and that router files export valid middleware functions.
+
+📝 License
+
+This project is licensed under the MIT License.
+
+🤝 Contributing
+
+Contributions are welcome! Please fork the repository and create a pull request with your changes.
+
+📧 Contact
+
+For any inquiries or issues, please contact your.email@example.com.
+
+Feel free to customize any sections further to better fit your project’s specifics. If you have any additional content or need further customization, let me know!
