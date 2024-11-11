@@ -133,4 +133,4 @@ Contributions are welcome! Please fork the repository and create a pull request 
 
 ### 📧 Contact
 
-For any inquiries or issues, please contact [jghdg1234@gmail.com](mailto:jghdg1234@gmail.com).
+
