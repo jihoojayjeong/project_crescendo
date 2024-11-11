@@ -90,7 +90,7 @@ const redirectUserBasedOnRole = (req, res, role) => {
   if (role === 'student') {
     console.log("Redirecting to student page....");
     return res.redirect(`${redirectBaseUrl}/Dashboard`);
-  } else if (role === 'faculty') {
+  } else if (role === 'professor') {
     console.log("Redirecting to faculty page....");
     return res.redirect(`${redirectBaseUrl}/Courses`);
   } else {
