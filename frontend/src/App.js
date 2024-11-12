@@ -46,13 +46,13 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LoginPage />} />
-          <Route element={<PrivateRoute isAuthenticated={isAuthenticated} userRole={userRole} allowedRoles={['student', 'faculty']} />}>
+          <Route element={<PrivateRoute isAuthenticated={isAuthenticated} userRole={userRole} allowedRoles={['student', 'professor']} />}>
             <Route path="/Dashboard" element={<Dashboard />} />
             <Route path="/FeedbackPage" element={<FeedbackPage />} />
             <Route path="/GiveFeedback" element={<GiveFeedback />} />
             <Route path="/course/:courseId" element={<CourseComponent />} />
           </Route>
-          <Route element={<PrivateRoute isAuthenticated={isAuthenticated} userRole={userRole} allowedRoles={['faculty']} />}>
+          <Route element={<PrivateRoute isAuthenticated={isAuthenticated} userRole={userRole} allowedRoles={['professor']} />}>
             <Route path="/Courses" element={<Courses />} />
           </Route>
         </Routes>
