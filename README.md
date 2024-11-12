@@ -116,13 +116,6 @@ To generate dummy user data, use the `scripts/seed.js` file.
     ```
     TypeError: Router.use() requires a middleware function
     ```
-
----
-
-### 📝 License
-
-This project is licensed under the MIT License.
-
 ---
 
 ### 🤝 Contributing
@@ -132,5 +125,7 @@ Contributions are welcome! Please fork the repository and create a pull request 
 ---
 
 ### 📧 Contact
+
+kevinc97@vt.edu
 
 
