@@ -60,6 +60,9 @@ const courseSchema = new mongoose.Schema({
       type: Date,
       default: Date.now
     }
+  }],
+  feedbackTemplates: [{
+    type: String
   }]
 }, {
   timestamps: true

@@ -13,7 +13,7 @@ const PrivateRoute = ({ isAuthenticated, userRole, allowedRoles }) => {
 
   if (!allowedRoles.includes(userRole)) {
     alert(`Access denied. Redirecting to ${userRole === 'student' ? 'Dashboard' : 'Courses'} page.`);
-    return <Navigate to={userRole === 'faculty' ? '/Courses' : '/Dashboard'} replace />;
+    return <Navigate to={userRole === 'professor' ? '/Courses' : '/Dashboard'} replace />;
   }
 
   return <Outlet />;

@@ -7,10 +7,44 @@ const FacultyAssignmentTab = ({ course, setCourse }) => {
     const [showAssignmentModal, setShowAssignmentModal] = useState(false);
     const [newAssignment, setNewAssignment] = useState({ name: '', description: '', dueDate: '' });
     const [editingAssignment, setEditingAssignment] = useState(null);
+    const [feedbackTemplates, setFeedbackTemplates] = useState([
+        "Positive feedback",
+        "Improvements",
+        "Suggestions",
+        "Any other comments?"
+    ]);
+    const [newTemplate, setNewTemplate] = useState('');
+    const [editingTemplateIndex, setEditingTemplateIndex] = useState(null);
+
+    const handleAddTemplate = () => {
+        if (newTemplate.trim()) {
+            if (editingTemplateIndex !== null) {
+                const updatedTemplates = [...feedbackTemplates];
+                updatedTemplates[editingTemplateIndex] = newTemplate;
+                setFeedbackTemplates(updatedTemplates);
+                setEditingTemplateIndex(null);
+            } else {
+                setFeedbackTemplates([...feedbackTemplates, newTemplate]);
+            }
+            setNewTemplate('');
+        }
+    };
+
+    const handleEditTemplate = (index) => {
+        setNewTemplate(feedbackTemplates[index]);
+        setEditingTemplateIndex(index);
+    };
+
+    const handleDeleteTemplate = (index) => {
+        setFeedbackTemplates(feedbackTemplates.filter((_, i) => i !== index));
+    };
 
     const handleCreateAssignment = async () => {
         try {
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}/courses/${course._id}/assignments`, newAssignment, {
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/courses/${course._id}/assignments`, {
+                ...newAssignment,
+                feedbackTemplates
+            }, {
                 withCredentials: true,
                 headers: {
                     'Content-Type': 'application/json'
@@ -169,6 +203,37 @@ const FacultyAssignmentTab = ({ course, setCourse }) => {
                                             : setNewAssignment({...newAssignment, dueDate: e.target.value})
                                         }
                                     />
+                                </div>
+                                <div className="mb-4">
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Feedback Templates:
+                                    </label>
+                                    <ul className="list-disc pl-5">
+                                        {feedbackTemplates.map((template, index) => (
+                                            <li key={index} className="text-sm text-gray-600 flex items-center">
+                                                {template}
+                                                <button onClick={() => handleEditTemplate(index)} className="ml-2 text-blue-500 hover:text-blue-700">
+                                                    <FaEdit />
+                                                </button>
+                                                <button onClick={() => handleDeleteTemplate(index)} className="ml-2 text-red-500 hover:text-red-700">
+                                                    <FaTrash />
+                                                </button>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                    <input
+                                        type="text"
+                                        className="mt-2 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                                        placeholder="Add custom template"
+                                        value={newTemplate}
+                                        onChange={(e) => setNewTemplate(e.target.value)}
+                                    />
+                                    <button
+                                        onClick={handleAddTemplate}
+                                        className="mt-2 px-4 py-2 bg-green-500 text-white text-sm font-medium rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-300"
+                                    >
+                                        {editingTemplateIndex !== null ? 'Update Template' : '+ Add custom template'}
+                                    </button>
                                 </div>
                             </div>
                             <div className="items-center px-4 py-3">

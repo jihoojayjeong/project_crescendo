@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
@@ -11,6 +11,10 @@ import FacultyGroupTab from '../components/FacultyGroupTab';
 import FacultyAssignmentTab from '../components/FacultyAssignmentTab';
 import { FaBook, FaCalendar, FaHashtag, FaKey } from 'react-icons/fa';
 import { handleLogout } from '../utils/casUtils';
+
+const fetchUserData = async () => {
+    // 사용자 데이터를 가져오는 로직을 여기에 추가하세요.
+};
 
 const MainContent = ({ children, isSidebarOpen }) => (
     <div className={`flex-1 transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-20'}`}>
@@ -26,38 +30,37 @@ const CourseDetails = () => {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('assignments');
 
+    const fetchCourseDetails = async () => {
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${courseId}`, {
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            setCourse(response.data);
+        } catch (error) {
+            console.error('Error fetching course details:', error);
+        }
+    };
+
     useEffect(() => {
-        const fetchCourseDetails = async () => {
-            try {
-                const response = await axios.get(`${process.env.REACT_APP_API_URL}/courses/${courseId}`, {
-                    withCredentials: true,
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                setCourse(response.data);
-            } catch (error) {
-                console.error('Error fetching course details:', error);
-            }
-        };
-
-        const fetchUserData = async () => {
-            try {
-                const response = await axios.get(`${process.env.REACT_APP_API_URL}/user/getUser`, {
-                    withCredentials: true,
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                setUser(response.data);
-            } catch (error) {
-                console.error('Error fetching user data:', error);
-            }
-        };
-
         fetchCourseDetails();
         fetchUserData();
     }, [courseId]);
+
+    const handleDeleteCourse = async () => {
+        try {
+            await axios.delete(`${process.env.REACT_APP_API_URL}/courses/${courseId}`, {
+                withCredentials: true
+            });
+            toast.success('Course deleted successfully');
+            navigate('/Courses');
+        } catch (error) {
+            console.error('Error deleting course:', error);
+            toast.error('Failed to delete course');
+        }
+    };
 
     const toggleSidebar = () => {
         setSidebarOpen(!isSidebarOpen);

@@ -7,7 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 const LoginPage = () => {
     const [isLocalEnv] = useState(process.env.NODE_ENV === 'development');
     //use this param to determine if the user is a student or faculty in dev environment!
-    const [role, setRole] = useState('faculty');
+    const [role, setRole] = useState('professor');
 
     const handleLogin = (event) => {
         event.preventDefault();
@@ -60,7 +60,7 @@ const LoginPage = () => {
                                     className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-[#861F41] focus:border-[#861F41] sm:text-sm rounded-md"
                                 >
                                     <option value="student">Student</option>
-                                    <option value="faculty">Faculty</option>
+                                    <option value="professor">Faculty</option>
                                 </select>
                             </div>
                         )}

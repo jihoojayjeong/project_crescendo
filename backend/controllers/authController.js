@@ -90,7 +90,7 @@ const redirectUserBasedOnRole = (req, res, role) => {
   if (role === 'student') {
     console.log("Redirecting to student page....");
     return res.redirect(`${redirectBaseUrl}/Dashboard`);
-  } else if (role === 'professor') {
+  } else if (role === 'faculty') {
     console.log("Redirecting to faculty page....");
     return res.redirect(`${redirectBaseUrl}/Courses`);
   } else {
@@ -112,7 +112,7 @@ exports.fakeLogin = async (req, res) => {
 
     const fakeUser = {
       pid: '12345678',
-      role: role || 'student',
+      role: role === 'professor' ? 'professor' : 'student',
       name: 'John Doe',
       email: 'johndoe@local.dev',
       isFirstLogin: false,

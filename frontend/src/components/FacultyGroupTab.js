@@ -274,19 +274,12 @@ const FacultyGroupTab = ({ onGroupSave }) => {
               ))}
             </ul>
             <div className="px-4 py-3 flex justify-end space-x-2">
-              {group.groupNumber.toString() === userGroup ? (
+              {group.groupNumber.toString() === userGroup && (
                 <button
                   onClick={() => handleViewFeedbacks(group, 'received')}
                   className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
                 >
                   See feedbacks received
-                </button>
-              ) : (
-                <button
-                  onClick={() => handleViewFeedbacks(group, 'sent')}
-                  className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-                >
-                  See feedbacks sent
                 </button>
               )}
             </div>
